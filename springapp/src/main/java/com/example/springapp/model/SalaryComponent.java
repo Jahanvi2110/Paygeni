@@ -1,4 +1,5 @@
 package com.example.springapp.model;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,16 +11,21 @@ public class SalaryComponent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String componentName;
-     // HRA, Bonus, etc.
-    private double amount;
+    @Column(nullable = false)
+    private String componentName; // HRA, Bonus, Allowance, etc.
+
+    @Column(nullable = false)
+    private Double amount;
+
+    @Column(nullable = false)
+    private Long payrollId; // Link to payroll ID
+
+    private String componentType; // EARNING, DEDUCTION
+    private String description;
+    private Boolean isTaxable; // true for taxable components
+    private String status; // ACTIVE, INACTIVE
+
     @ManyToOne
-@JoinColumn(name = "payroll_id")
-private Payroll payroll;
-
-
-    
-
-    
-
+    @JoinColumn(name = "payroll_id", referencedColumnName = "id")
+    private Payroll payroll;
 }
