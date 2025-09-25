@@ -1,0 +1,657 @@
+<!-- Header -->
+<header class="page-header">
+  <div class="header-content">
+    <div class="header-left">
+      <h1 class="page-title">Employee Management</h1>
+      <p class="page-subtitle">Manage your organization's employees and their information</p>
+    </div>
+    <div class="header-right">
+      <div class="nav-buttons">
+        <button class="nav-btn home" routerLink="/home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9,22 9,12 15,12 15,22"/>
+          </svg>
+          Home
+        </button>
+        <button class="nav-btn back" (click)="goBack()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Back
+        </button>
+      </div>
+      <div class="user-info">
+        <div class="user-avatar">{{ currentUser?.name?.charAt(0) || 'A' }}</div>
+        <div class="user-details">
+          <span class="user-name">{{ currentUser?.name || 'Admin User' }}</span>
+          <span class="user-role">{{ currentUser?.role?.toUpperCase() || 'ADMINISTRATOR' }}</span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16,17 21,12 16,7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+  </div>
+</header>
+<!-- Main Content -->
+<main class="main-content">
+  <!-- Stats Cards -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="stat-icon employees-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <div class="icon-bg"></div>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number counter">{{ employees.length }}</h3>
+          <p class="stat-label">Total Employees</p>
+          <div class="stat-trend positive">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+              <polyline points="17,6 23,6 23,12"/>
+            </svg>
+            <span>+12% this month</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="stat-icon active-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4"/>
+            <circle cx="12" cy="12" r="10"/>
+          </svg>
+          <div class="icon-bg"></div>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number counter">{{ getActiveEmployeeCount() }}</h3>
+          <p class="stat-label">Active Employees</p>
+          <div class="stat-trend positive">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+              <polyline points="17,6 23,6 23,12"/>
+            </svg>
+            <span>95% active rate</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="stat-icon budget-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <div class="icon-bg"></div>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number counter">₹{{ getTotalSalaryBudgetK() }}K</h3>
+          <p class="stat-label">Total Salary Budget</p>
+          <div class="stat-trend positive">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+              <polyline points="17,6 23,6 23,12"/>
+            </svg>
+            <span>+8% from last month</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+        <div class="stat-icon departments-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9,22 9,12 15,12 15,22"/>
+          </svg>
+          <div class="icon-bg"></div>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number counter" data-target="4">4</h3>
+          <p class="stat-label">Departments</p>
+          <div class="stat-trend neutral">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Stable structure</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Analytics Dashboard -->
+  <section class="analytics-section">
+    <div class="analytics-header">
+      <h2 class="analytics-title">📊 Employee Analytics</h2>
+      <p class="analytics-subtitle">Data-driven insights into your workforce</p>
+    </div>
+    
+    <div class="charts-grid">
+      <!-- Department Distribution Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>Department Distribution</h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          </svg>
+        </div>
+        <div class="chart-content">
+          <div class="pie-chart">
+            <div class="pie-slice" *ngFor="let dept of getDepartmentDistribution()" 
+                 [style.--percentage]="dept.percentage + '%'"
+                 [style.--color]="getDepartmentColor(dept.department)">
+              <div class="slice-fill"></div>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item" *ngFor="let dept of getDepartmentDistribution()">
+              <div class="legend-color" [style.background-color]="getDepartmentColor(dept.department)"></div>
+              <span class="legend-label">{{ dept.department }}</span>
+              <span class="legend-value">{{ dept.count }} ({{ dept.percentage | number:'1.0-1' }}%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Salary Distribution Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>Salary Distribution</h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div class="chart-content">
+          <div class="bar-chart">
+            <div class="bar-item" *ngFor="let range of getSalaryDistribution()">
+              <div class="bar-label">{{ range.range }}</div>
+              <div class="bar-container">
+                <div class="bar-fill" [style.width.%]="(range.count / getMaxSalaryCount()) * 100"></div>
+                <span class="bar-value">{{ range.count }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Distribution -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>Performance Ratings</h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+          </svg>
+        </div>
+        <div class="chart-content">
+          <div class="performance-chart">
+            <div class="performance-item" *ngFor="let perf of getPerformanceDistribution()">
+              <div class="performance-rating">{{ perf.rating }}</div>
+              <div class="performance-bar">
+                <div class="performance-fill" [style.width.%]="(perf.count / getMaxPerformanceCount()) * 100"></div>
+              </div>
+              <div class="performance-count">{{ perf.count }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Performers -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>Top Performers</h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4"/>
+            <circle cx="12" cy="12" r="10"/>
+          </svg>
+        </div>
+        <div class="chart-content">
+          <div class="top-performers">
+            <div class="performer-item" *ngFor="let performer of getTopPerformers(); let i = index">
+              <div class="performer-rank">{{ i + 1 }}</div>
+              <div class="performer-avatar">
+                <img [src]="performer.photo" [alt]="performer.name" class="performer-photo"
+                     (error)="handleImageError($event)">
+                <div class="performer-fallback" style="display: none;">{{ performer.name.charAt(0) }}</div>
+              </div>
+              <div class="performer-info">
+                <div class="performer-name">{{ performer.name }}</div>
+                <div class="performer-role">{{ performer.role }}</div>
+              </div>
+              <div class="performer-rating">
+                <span class="rating-stars">⭐ {{ performer.performance }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Employee Management -->
+  <section class="employee-section">
+    <div class="section-header">
+      <h2 class="section-title">Employee Directory</h2>
+      <button class="add-btn" (click)="addEmployee()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Add Employee
+      </button>
+    </div>
+
+    <!-- Search and Filter Controls -->
+    <div class="controls-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            placeholder="Search employees by name, email, role, or ID..."
+            class="search-input"
+          >
+          <div class="search-glow"></div>
+        </div>
+      </div>
+      
+      <div class="filter-controls">
+        <div class="filter-group">
+          <label>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            Department
+          </label>
+          <select [(ngModel)]="selectedDepartment" class="filter-select">
+            <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 16,14"/>
+            </svg>
+            Status
+          </label>
+          <select [(ngModel)]="selectedStatus" class="filter-select">
+            <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+          </select>
+        </div>
+        
+        <button class="clear-btn" (click)="clearFilters()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          Clear Filters
+        </button>
+      </div>
+      
+      <!-- Results Info -->
+      <div class="results-info" *ngIf="searchTerm || selectedDepartment !== 'All' || selectedStatus !== 'All'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <span>Showing {{ filteredEmployees.length }} of {{ employees.length }} employees</span>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="employee-table">
+        <thead>
+          <tr>
+            <th (click)="sortEmployees('id')" class="sortable">
+              Employee ID
+              <svg *ngIf="sortBy === 'id'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path *ngIf="sortOrder === 'asc'" d="M12 5l-7 7h14l-7-7z"/>
+                <path *ngIf="sortOrder === 'desc'" d="M12 19l7-7H5l7 7z"/>
+              </svg>
+            </th>
+            <th (click)="sortEmployees('name')" class="sortable">
+              Name
+              <svg *ngIf="sortBy === 'name'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path *ngIf="sortOrder === 'asc'" d="M12 5l-7 7h14l-7-7z"/>
+                <path *ngIf="sortOrder === 'desc'" d="M12 19l7-7H5l7 7z"/>
+              </svg>
+            </th>
+            <th (click)="sortEmployees('role')" class="sortable">
+              Role
+              <svg *ngIf="sortBy === 'role'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path *ngIf="sortOrder === 'asc'" d="M12 5l-7 7h14l-7-7z"/>
+                <path *ngIf="sortOrder === 'desc'" d="M12 19l7-7H5l7 7z"/>
+              </svg>
+            </th>
+            <th (click)="sortEmployees('department')" class="sortable">
+              Department
+              <svg *ngIf="sortBy === 'department'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path *ngIf="sortOrder === 'asc'" d="M12 5l-7 7h14l-7-7z"/>
+                <path *ngIf="sortOrder === 'desc'" d="M12 19l7-7H5l7 7z"/>
+              </svg>
+            </th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th (click)="sortEmployees('salary')" class="sortable">
+              Salary
+              <svg *ngIf="sortBy === 'salary'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path *ngIf="sortOrder === 'asc'" d="M12 5l-7 7h14l-7-7z"/>
+                <path *ngIf="sortOrder === 'desc'" d="M12 19l7-7H5l7 7z"/>
+              </svg>
+            </th>
+            <th (click)="sortEmployees('joinDate')" class="sortable">
+              Join Date
+              <svg *ngIf="sortBy === 'joinDate'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path *ngIf="sortOrder === 'asc'" d="M12 5l-7 7h14l-7-7z"/>
+                <path *ngIf="sortOrder === 'desc'" d="M12 19l7-7H5l7 7z"/>
+              </svg>
+            </th>
+            <th (click)="sortEmployees('status')" class="sortable">
+              Status
+              <svg *ngIf="sortBy === 'status'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path *ngIf="sortOrder === 'asc'" d="M12 5l-7 7h14l-7-7z"/>
+                <path *ngIf="sortOrder === 'desc'" d="M12 19l7-7H5l7 7z"/>
+              </svg>
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emp of filteredEmployees">
+            <td class="emp-id">{{ emp.id }}</td>
+            <td class="emp-name">
+              <div class="name-cell">
+                <div class="avatar">
+                  <img [src]="emp.photo" [alt]="emp.name" class="employee-photo" 
+                       (error)="handleImageError($event)">
+                  <div class="avatar-fallback" style="display: none;">{{ emp.name.charAt(0) }}</div>
+                </div>
+                <div class="name-info">
+                  <span class="employee-name">{{ emp.name }}</span>
+                  <span class="employee-location">{{ emp.location }}</span>
+                </div>
+              </div>
+            </td>
+            <td>{{ emp.role }}</td>
+            <td>{{ emp.department }}</td>
+            <td>{{ emp.email }}</td>
+            <td>{{ emp.phone }}</td>
+            <td class="salary">₹{{ emp.salary | number }}</td>
+            <td>{{ emp.joinDate }}</td>
+            <td>
+              <span class="status-badge" 
+                    [class.active]="emp.status === 'Active'" 
+                    [class.inactive]="emp.status === 'Inactive'" 
+                    [class.on-leave]="emp.status === 'On Leave'">
+                {{ emp.status }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="action-btn view" (click)="viewEmployee(emp)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                View
+              </button>
+              <button class="action-btn edit" (click)="editEmployee(emp)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Edit
+              </button>
+              <button class="action-btn delete" (click)="deleteEmployee(emp)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3,6 5,6 21,6"/>
+                  <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
+                </svg>
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="footer glass">
+  <p>© 2025 PayGenie. All rights reserved.</p>
+</footer>
+
+<!-- Employee Detail Modal -->
+<div class="modal-overlay" *ngIf="selectedEmployee" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Employee Details</h3>
+      <button class="modal-close" (click)="closeModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body" *ngIf="selectedEmployee">
+      <div class="employee-profile">
+        <div class="profile-avatar">
+          <img [src]="selectedEmployee.photo" [alt]="selectedEmployee.name" class="profile-photo"
+               (error)="handleImageError($event)">
+          <div class="profile-fallback" style="display: none;">{{ selectedEmployee.name.charAt(0) }}</div>
+        </div>
+        <div class="profile-info">
+          <h2 class="profile-name">{{ selectedEmployee.name }}</h2>
+          <p class="profile-role">{{ selectedEmployee.role }}</p>
+          <p class="profile-department">{{ selectedEmployee.department }} • {{ selectedEmployee.location }}</p>
+          <div class="profile-metrics">
+            <div class="metric">
+              <span class="metric-label">Performance</span>
+              <span class="metric-value">⭐ {{ selectedEmployee.performance }}</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Experience</span>
+              <span class="metric-value">{{ selectedEmployee.experience }}</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Projects</span>
+              <span class="metric-value">{{ selectedEmployee.projects }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="profile-status">
+          <span class="status-badge" 
+                [class.active]="selectedEmployee.status === 'Active'" 
+                [class.inactive]="selectedEmployee.status === 'Inactive'" 
+                [class.on-leave]="selectedEmployee.status === 'On Leave'">
+            {{ selectedEmployee.status }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="employee-details-grid">
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Email</h4>
+            <p>{{ selectedEmployee.email }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Phone</h4>
+            <p>{{ selectedEmployee.phone }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Salary</h4>
+            <p>₹{{ selectedEmployee.salary | number }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Join Date</h4>
+            <p>{{ selectedEmployee.joinDate }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Employee ID</h4>
+            <p>{{ selectedEmployee.id }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Department</h4>
+            <p>{{ selectedEmployee.department }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Manager</h4>
+            <p>{{ selectedEmployee.manager }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Performance Rating</h4>
+            <p>⭐ {{ selectedEmployee.performance }}/5.0</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Last Promotion</h4>
+            <p>{{ selectedEmployee.lastPromotion }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Team Size</h4>
+            <p>{{ selectedEmployee.teamSize }} members</p>
+          </div>
+        </div>
+        
+        <div class="detail-card skills-card">
+          <div class="detail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4"/>
+              <rect x="9" y="3" width="6" height="8" rx="1"/>
+            </svg>
+          </div>
+          <div class="detail-content">
+            <h4>Skills</h4>
+            <div class="skills-list">
+              <span class="skill-tag" *ngFor="let skill of selectedEmployee.skills">{{ skill }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="modal-btn edit" (click)="editEmployee(selectedEmployee); closeModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Edit Employee
+        </button>
+        <button class="modal-btn delete" (click)="deleteEmployee(selectedEmployee); closeModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3,6 5,6 21,6"/>
+            <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
+          </svg>
+          Delete Employee
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

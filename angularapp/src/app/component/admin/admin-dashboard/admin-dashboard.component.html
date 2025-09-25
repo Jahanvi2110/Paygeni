@@ -1,0 +1,326 @@
+<div class="admin-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">💼</span>
+        <span class="logo-text">PayGeni</span>
+      </div>
+      <div class="admin-badge">Admin Panel</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <h3 class="nav-title">Overview</h3>
+        <a routerLink="/admin-dashboard" class="nav-item active">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-title">Management</h3>
+        <a routerLink="/employees" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Employees</span>
+        </a>
+        <a routerLink="/user-account" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="8.5" cy="7" r="4"/>
+            <polyline points="17,11 19,13 23,9"/>
+          </svg>
+          <span>User Accounts</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-title">Payroll</h3>
+        <a routerLink="/payrolls" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <span>Payroll</span>
+        </a>
+        <a routerLink="/salary" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <span>Salary Components</span>
+        </a>
+        <a routerLink="/deduction" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+          <span>Deductions</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-title">Attendance</h3>
+        <a routerLink="/attendance" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+          <span>Attendance</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-title">Reports</h3>
+        <a routerLink="/dashboard" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v18h18"/>
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+          </svg>
+          <span>Analytics</span>
+        </a>
+        <a routerLink="/employee-dashboard" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Employee View</span>
+        </a>
+      </div>
+    </nav>
+
+                <div class="sidebar-footer">
+                  <button class="logout-btn" (click)="logout()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                      <polyline points="16,17 21,12 16,7"/>
+                      <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    <span>Logout</span>
+                  </button>
+                </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <h1 class="page-title">Admin Dashboard</h1>
+        <p class="page-subtitle">Welcome back! Here's what's happening with your payroll system.</p>
+      </div>
+      <div class="header-right">
+                  <div class="user-info">
+                    <div class="user-avatar">{{ currentUser?.name?.charAt(0) || 'A' }}</div>
+                    <div class="user-details">
+                      <span class="user-name">{{ currentUser?.name || 'Admin User' }}</span>
+                      <span class="user-role">{{ currentUser?.role?.toUpperCase() || 'ADMINISTRATOR' }}</span>
+                    </div>
+                  </div>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ totalEmployees }}</h3>
+            <p class="stat-label">Total Employees</p>
+            <span class="stat-change positive">+12% from last month</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ totalPayrolls }}</h3>
+            <p class="stat-label">Payrolls Processed</p>
+            <span class="stat-change positive">+8% from last month</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 16,14"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ pendingApprovals }}</h3>
+            <p class="stat-label">Pending Approvals</p>
+            <span class="stat-change negative">-3 from yesterday</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">₹2.4M</h3>
+            <p class="stat-label">Total Payroll Amount</p>
+            <span class="stat-change positive">+15% from last month</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="actions-section">
+      <h2 class="section-title">Quick Actions</h2>
+      <div class="actions-grid">
+        <a routerLink="/employees" class="action-card">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Manage Employees</h3>
+            <p>Add, edit, or remove employee records</p>
+          </div>
+        </a>
+
+        <a routerLink="/payrolls" class="action-card">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Generate Payroll</h3>
+            <p>Process monthly payroll for all employees</p>
+          </div>
+        </a>
+
+        <a routerLink="/attendance" class="action-card">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 16,14"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>View Attendance</h3>
+            <p>Check employee attendance records</p>
+          </div>
+        </a>
+
+        <a routerLink="/salary" class="action-card">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Salary Components</h3>
+            <p>Manage salary structures and components</p>
+          </div>
+        </a>
+
+        <a routerLink="/deduction" class="action-card">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Manage Deductions</h3>
+            <p>Set up and manage employee deductions</p>
+          </div>
+        </a>
+
+        <a routerLink="/dashboard" class="action-card">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>View Analytics</h3>
+            <p>Access detailed reports and analytics</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Recent Activity -->
+    <section class="activity-section">
+      <h2 class="section-title">Recent Activity</h2>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="activity-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="activity-content">
+            <p><strong>New employee added:</strong> John Smith joined the team</p>
+            <span class="activity-time">2 hours ago</span>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="activity-content">
+            <p><strong>Payroll processed:</strong> December 2024 payroll completed</p>
+            <span class="activity-time">1 day ago</span>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 16,14"/>
+            </svg>
+          </div>
+          <div class="activity-content">
+            <p><strong>Attendance updated:</strong> 15 employees marked present</p>
+            <span class="activity-time">3 hours ago</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

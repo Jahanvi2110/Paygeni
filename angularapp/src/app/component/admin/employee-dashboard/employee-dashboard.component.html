@@ -1,0 +1,390 @@
+<div class="employee-container">
+  <!-- Header -->
+  <header class="employee-header">
+    <div class="header-content">
+      <div class="employee-info">
+        <div class="employee-avatar">
+          <span>{{ (currentUser?.name || employeeName).charAt(0) }}</span>
+        </div>
+        <div class="employee-details">
+          <h1 class="employee-name">{{ currentUser?.name || employeeName }}</h1>
+          <p class="employee-role">{{ position }} • {{ department }}</p>
+          <span class="employee-id">ID: {{ currentUser?.id || employeeId }}</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="nav-buttons">
+          <button class="nav-btn home" routerLink="/home">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
+            Home
+          </button>
+          <button class="nav-btn back" (click)="goBack()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+          </button>
+        </div>
+        <button class="action-btn" (click)="downloadPayslip(currentMonth)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7,10 12,15 17,10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download Payslip
+        </button>
+        <button class="action-btn primary" (click)="requestLeave()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 2v4"/>
+            <path d="M16 2v4"/>
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Request Leave
+        </button>
+        <button class="action-btn logout" (click)="logout()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16,17 21,12 16,7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Content -->
+  <main class="dashboard-content">
+    <!-- Salary Overview -->
+    <section class="salary-section">
+      <h2 class="section-title">Salary Overview</h2>
+      <div class="salary-grid">
+        <div class="salary-card">
+          <div class="card-header">
+            <h3>Current Month</h3>
+            <span class="month-badge">{{ currentMonth }}</span>
+          </div>
+          <div class="salary-details">
+            <div class="salary-item">
+              <span class="label">Basic Salary</span>
+              <span class="amount">₹{{ basicSalary | number }}</span>
+            </div>
+            <div class="salary-item">
+              <span class="label">Allowances</span>
+              <span class="amount">₹{{ allowances | number }}</span>
+            </div>
+            <div class="salary-item total">
+              <span class="label">Total Earnings</span>
+              <span class="amount">₹{{ totalEarnings | number }}</span>
+            </div>
+            <div class="salary-item deduction">
+              <span class="label">Deductions</span>
+              <span class="amount">-₹{{ deductions | number }}</span>
+            </div>
+            <div class="salary-item net">
+              <span class="label">Net Salary</span>
+              <span class="amount">₹{{ netSalary | number }}</span>
+            </div>
+          </div>
+          <div class="pay-status">
+            <span class="status-badge" [class.pending]="payStatus === 'Pending'" [class.paid]="payStatus === 'Paid'">
+              {{ payStatus }}
+            </span>
+            <p class="pay-date">Next Pay: {{ nextPayDate }}</p>
+          </div>
+        </div>
+
+        <div class="quick-stats">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <h3>₹{{ netSalary | number }}</h3>
+              <p>Monthly Salary</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12,6 12,12 16,14"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <h3>{{ attendancePercentage }}%</h3>
+              <p>Attendance</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 2v4"/>
+                <path d="M16 2v4"/>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <h3>{{ remainingLeaves }}</h3>
+              <p>Leaves Left</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Transactions -->
+    <section class="transactions-section">
+      <h2 class="section-title">Recent Transactions</h2>
+      <div class="transactions-list">
+        <div class="transaction-item" *ngFor="let transaction of recentTransactions">
+          <div class="transaction-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="transaction-details">
+            <h4>{{ transaction.description }}</h4>
+            <p>{{ transaction.date }} • {{ transaction.type }}</p>
+          </div>
+          <div class="transaction-amount">
+            <span class="amount">₹{{ transaction.amount | number }}</span>
+            <span class="status" [class.paid]="transaction.status === 'Paid'">{{ transaction.status }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leave & Attendance Summary -->
+    <section class="summary-section">
+      <div class="summary-grid">
+        <!-- Leave Summary -->
+        <div class="summary-card">
+          <h3 class="card-title">Leave Summary</h3>
+          <div class="leave-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="(usedLeaves / totalLeaves) * 100"></div>
+            </div>
+            <div class="leave-stats">
+              <div class="leave-item">
+                <span class="label">Total Leaves</span>
+                <span class="value">{{ totalLeaves }}</span>
+              </div>
+              <div class="leave-item">
+                <span class="label">Used</span>
+                <span class="value">{{ usedLeaves }}</span>
+              </div>
+              <div class="leave-item">
+                <span class="label">Remaining</span>
+                <span class="value">{{ remainingLeaves }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attendance Summary -->
+        <div class="summary-card">
+          <h3 class="card-title">Attendance Summary</h3>
+          <div class="attendance-stats">
+            <div class="attendance-item">
+              <span class="label">Working Days</span>
+              <span class="value">{{ totalWorkingDays }}</span>
+            </div>
+            <div class="attendance-item">
+              <span class="label">Present</span>
+              <span class="value present">{{ presentDays }}</span>
+            </div>
+            <div class="attendance-item">
+              <span class="label">Absent</span>
+              <span class="value absent">{{ absentDays }}</span>
+            </div>
+            <div class="attendance-item">
+              <span class="label">Percentage</span>
+              <span class="value percentage">{{ attendancePercentage }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Flexible Shifts Section -->
+    <section class="shifts-section">
+      <h2 class="section-title">🕒 Flexible Shifts</h2>
+      <div class="shifts-container">
+        <div class="current-shift">
+          <h3>Current Shift</h3>
+          <div class="shift-card">
+            <div class="shift-info">
+              <span class="shift-name">{{ currentShift.name }}</span>
+              <span class="shift-time">{{ currentShift.startTime }} - {{ currentShift.endTime }}</span>
+            </div>
+            <div class="shift-status" [class.active]="currentShift.isActive">
+              {{ currentShift.isActive ? 'Active' : 'Inactive' }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="shift-actions">
+          <button class="shift-btn" (click)="punchIn()" [disabled]="!canPunchIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 16,14"/>
+            </svg>
+            Punch In
+          </button>
+          <button class="shift-btn" (click)="punchOut()" [disabled]="!canPunchOut">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 8,14"/>
+            </svg>
+            Punch Out
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loans & Advances Section -->
+    <section class="loans-section">
+      <h2 class="section-title">💰 Loans & Advances</h2>
+      <div class="loans-container">
+        <div class="loan-summary">
+          <div class="loan-card">
+            <h3>Active Loans</h3>
+            <div class="loan-amount">₹{{ activeLoanAmount | number }}</div>
+            <p>{{ activeLoansCount }} active loan(s)</p>
+          </div>
+          <div class="loan-card">
+            <h3>Advance Balance</h3>
+            <div class="loan-amount">₹{{ advanceBalance | number }}</div>
+            <p>Available for advance</p>
+          </div>
+        </div>
+        
+        <div class="loan-actions">
+          <button class="loan-btn" (click)="requestAdvance()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Request Advance
+          </button>
+          <button class="loan-btn" (click)="viewLoanHistory()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+            </svg>
+            View History
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customizable Reports Section -->
+    <section class="reports-section">
+      <h2 class="section-title">📊 Customizable Reports</h2>
+      <div class="reports-container">
+        <div class="report-filters">
+          <select [(ngModel)]="selectedReportType" class="report-select">
+            <option value="attendance">Attendance Report</option>
+            <option value="salary">Salary Report</option>
+            <option value="leave">Leave Report</option>
+            <option value="performance">Performance Report</option>
+          </select>
+          <select [(ngModel)]="selectedPeriod" class="report-select">
+            <option value="current-month">Current Month</option>
+            <option value="last-3-months">Last 3 Months</option>
+            <option value="last-6-months">Last 6 Months</option>
+            <option value="current-year">Current Year</option>
+          </select>
+        </div>
+        
+        <div class="report-actions">
+          <button class="report-btn" (click)="generateReport()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+            </svg>
+            Generate Report
+          </button>
+          <button class="report-btn" (click)="downloadReport()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7,10 12,15 17,10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download Excel
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="actions-section">
+      <h2 class="section-title">Quick Actions</h2>
+      <div class="actions-grid">
+        <button class="action-card" (click)="downloadPayslip('All')">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7,10 12,15 17,10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Download Payslips</h3>
+            <p>Get all your salary slips</p>
+          </div>
+        </button>
+
+        <button class="action-card" (click)="requestLeave()">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 2v4"/>
+              <path d="M16 2v4"/>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Request Leave</h3>
+            <p>Apply for time off</p>
+          </div>
+        </button>
+
+        <button class="action-card" (click)="updateProfile()">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 19c-5 0-7-3-7-7s2-7 7-7 7 3 7 7-2 7-7 7z"/>
+              <path d="M15 13l-3-3-3 3"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Update Profile</h3>
+            <p>Manage your information</p>
+          </div>
+        </button>
+
+        <button class="action-card" (click)="viewPerformance()">
+          <div class="action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>View Performance</h3>
+            <p>Check your performance</p>
+          </div>
+        </button>
+      </div>
+    </section>
+  </main>
+</div>

@@ -1,0 +1,300 @@
+<header class="navbar">
+  <div class="navbar__inner">
+    <a routerLink="/home" class="brand">Paygeni</a>
+    <nav class="navlinks">
+      <a routerLink="/home">Home</a>
+      <a routerLink="/login">Login</a>
+      <a routerLink="/signup" class="btn btn-primary small">Get Started</a>
+    </nav>
+  </div>
+  </header>
+
+<section class="hero">
+  <div class="hero__content">
+    <div class="hero__grid">
+      <div class="hero__text">
+        <h1>Breakdown complex payroll calculations</h1>
+        <p>Automated payroll with attendance & leave tracking — hassle-free and on time.</p>
+        <div class="hero__ctas">
+          <a routerLink="/signup" class="btn btn-primary">Get Started</a>
+          <a routerLink="/login" class="btn btn-outline">Login</a>
+        </div>
+        <div class="hero__trust">
+          <span>Trusted by SMEs</span>
+        </div>
+      </div>
+      <div class="hero__card">
+        <h3>We'd love to answer your questions</h3>
+        <p>Get a personalised online demo & start your hassle-free payroll management journey today!</p>
+        <form class="hero-form" (submit)="$event.preventDefault()">
+          <div class="row">
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+          </div>
+          <div class="row">
+            <input type="tel" placeholder="Phone number">
+            <input type="text" placeholder="City">
+          </div>
+          <div class="row single">
+            <input type="text" placeholder="Business name">
+          </div>
+          <button class="btn btn-primary full" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+ 
+
+<section class="features-tabs">
+  <div class="features-tabs__inner">
+    <div class="features-tabs__header">
+      <span class="chip">Our features</span>
+      <h2>Next‑gen payroll software for next‑gen business owners</h2>
+      <p>We do payroll management & complete attendance tracking of your staff, so you don’t have to!</p>
+    </div>
+
+    <div class="tabs">
+      <input type="radio" id="tab-payroll" name="features" checked>
+      <label for="tab-payroll"><span class="num">01</span> Automated Payroll System</label>
+
+      <input type="radio" id="tab-attendance" name="features">
+      <label for="tab-attendance"><span class="num">02</span> Attendance & Timesheet</label>
+
+      <input type="radio" id="tab-leave" name="features">
+      <label for="tab-leave"><span class="num">03</span> Simplified Leave Management</label>
+
+      <div class="panels">
+        <div class="panel">
+          <div class="panel__grid">
+            <div class="panel__left">
+              <h3>Automated Payroll System</h3>
+              <p>We will do the complex calculations for you so you can always disburse your salary payments on time!</p>
+              <ul class="checks">
+                <li>Bifurcate monthly & hourly wage employees</li>
+                <li>Enforce overtime & late entry rules with a penalty</li>
+                <li>Easy breakdown of PF, ESIC and PT in employee salary</li>
+                <li>Single‑page, editable & easy payroll dashboard</li>
+                <li>Ready‑to‑download pay slips for each employee</li>
+              </ul>
+            </div>
+            <div class="panel__right">
+              <img class="panel__image" src="/assets/images/payroll.svg" alt="Automated payroll" />
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__grid">
+            <div class="panel__left">
+              <h3>Attendance & Timesheet</h3>
+              <p>Fingerprint & location‑based attendance to keep track of your staff’s whereabouts.</p>
+              <ul class="checks">
+                <li>Robust hardware with fast capacitive sensor</li>
+                <li>Instant data sync with software</li>
+                <li>Easy revisions of punch‑in</li>
+              </ul>
+            </div>
+            <div class="panel__right">
+              <img class="panel__image" src="/assets/images/attandance.svg" alt="Attendance" />
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__grid">
+            <div class="panel__left">
+              <h3>Simplified Leave Management</h3>
+              <p>Stay on top of your staff leaves & ensure you always have the required workforce.</p>
+              <ul class="checks">
+                <li>Multiple leave types</li>
+                <li>Paid & unpaid leave</li>
+                <li>Approval mechanism with balances</li>
+              </ul>
+            </div>
+            <div class="panel__right">
+              <img class="panel__image" src="/assets/images/leave.svg" alt="Leave" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+
+ 
+
+<section class="usp-sections">
+  <div class="usp-header">
+    <span class="chip">Our USPs</span>
+    <h2>Easy, detailed & accurate operations</h2>
+    <p>We have built functionalities that makes complex payroll processes extra smooth for you</p>
+  </div>
+ 
+  <div class="usp-row">
+    <div class="usp-text">
+      <h3>Flexible Shifts</h3>
+      <p>Overnight shifts? Whole‑day working? Multiple shifts in a day? Our shift module has you covered.</p>
+      <ul class="bullets">
+        <li>Multiple shift creation & assignment</li>
+        <li>24‑hour & overnight shifts timings</li>
+        <li>Alternate week‑off assignment</li>
+      </ul>
+    </div>
+    <div class="usp-media">
+      <img src="/assets/images/flexable.jpg" alt="Flexible shifts" />
+    </div>
+  </div>
+
+  <div class="usp-row">
+    <div class="usp-media">
+      <img src="/assets/images/loan.jpg" alt="Loans and advances" />
+    </div>
+    <div class="usp-text">
+      <h3>Loans & Advances</h3>
+      <p>Note advances and adjust against salary automatically with clear logs.</p>
+      <ul class="bullets">
+        <li>Easily note loans/advance payment transactions</li>
+        <li>Auto‑deduct advance payments from salary</li>
+        <li>Quick access to debit/credit logs</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="usp-row">
+    <div class="usp-text">
+      <h3>Customisable reports</h3>
+      <p>Download reports and get organization‑wide insights, tailored to your needs.</p>
+      <ul class="bullets">
+        <li>Download in Excel or export to Google Sheets</li>
+        <li>6+ standard reports & unlimited custom reports</li>
+        <li>Employee, department, designation & org‑wide views</li>
+      </ul>
+    </div>
+    <div class="usp-media">
+      <img src="/assets/images/employee.svg" alt="Reports" />
+    </div>
+  </div>
+</section>
+
+<section class="ops-section">
+  <div class="ops-header">
+    <span class="chip">Effortless operations</span>
+    <h2>Attendance and payroll management simplified for all!</h2>
+    <p>Effortless attendance monitoring system for employees with Employee App</p>
+  </div>
+  <div class="ops-toggle">
+    <input type="radio" id="ops-owner" name="opsToggle">
+    <input type="radio" id="ops-employee" name="opsToggle" checked>
+    <div class="pill-toggle">
+      <label for="ops-owner">Owner</label>
+      <label for="ops-employee">Employee</label>
+    </div>
+    <div class="ops-panels">
+      <div class="ops-panel">
+        <div class="ops-grid">
+          <div class="ops-left">
+            <ul class="checks">
+              <li>Staff onboarding & biometric registration is only possible from the app</li>
+              <li>Keep tabs on staff activity & operations anytime, from anywhere</li>
+              <li>Graphical view of daily attendance & activities across locations</li>
+              <li>Track the status of your biometric device</li>
+              <li>Hassle‑free approvals of leave & attendance adjustments</li>
+            </ul>
+          </div>
+          <div class="ops-right">
+            <img src="/assets/images/owner.svg" alt="Owner app" />
+          </div>
+        </div>
+      </div>
+      <div class="ops-panel">
+        <div class="ops-grid">
+          <div class="ops-left">
+            <ul class="checks">
+              <li>Allows employees to punch from their phones directly</li>
+              <li>Access shifts, leaves & daily attendance records</li>
+              <li>Submit leave requests & punch‑in time corrections</li>
+              <li>Punch‑in based on assigned, authorized locations</li>
+            </ul>
+          </div>
+          <div class="ops-right">
+            <img src="/assets/images/employee_payroll.svg" alt="Employee app" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Let's automate what's slowing you down</h2>
+  <a routerLink="/signup" class="btn btn-primary">Start Free</a>
+</section>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__content">
+      <div class="footer__brand">
+        <h3>Paygeni</h3>
+        <p>Automated payroll management made simple</p>
+      </div>
+      
+      <div class="footer__links">
+        <div class="footer__section">
+          <h4>Product</h4>
+          <a routerLink="/home">Features</a>
+          <a routerLink="/login">Login</a>
+          <a routerLink="/signup">Sign Up</a>
+        </div>
+        
+        <div class="footer__section">
+          <h4>Support</h4>
+          <a href="mailto:support@paygeni.com">Contact Us</a>
+          <a href="#" onclick="alert('Help Center coming soon!')">Help Center</a>
+          <a href="#" onclick="alert('Documentation coming soon!')">Documentation</a>
+        </div>
+        
+        <div class="footer__section">
+          <h4>Legal</h4>
+          <a href="#" onclick="alert('Privacy Policy coming soon!')">Privacy Policy</a>
+          <a href="#" onclick="alert('Terms of Service coming soon!')">Terms of Service</a>
+        </div>
+        
+        <div class="footer__section">
+          <h4>Follow Us</h4>
+          <div class="social__links">
+            <a href="https://github.com/Jahanvi2110/Paygeni" target="_blank" rel="noopener noreferrer" class="social__link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              GitHub
+            </a>
+            <a href="https://linkedin.com/company/paygeni" target="_blank" rel="noopener noreferrer" class="social__link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              LinkedIn
+            </a>
+            <a href="https://twitter.com/paygeni" target="_blank" rel="noopener noreferrer" class="social__link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+              </svg>
+              Twitter
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer__bottom">
+      <div>© 2025 Paygeni. All rights reserved.</div>
+      <div class="footer__bottom-links">
+        <a href="#" onclick="alert('Privacy Policy coming soon!')">Privacy</a>
+        <a href="#" onclick="alert('Terms of Service coming soon!')">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
