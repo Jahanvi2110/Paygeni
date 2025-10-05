@@ -357,8 +357,8 @@
 
     <div class="table-container">
       <table class="attendance-table">
-        <thead>
-          <tr>
+    <thead>
+      <tr>
             <th (click)="sortRecords('id')" class="sortable">
               Record ID
               <svg *ngIf="sortBy === 'id'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -417,9 +417,9 @@
               </svg>
             </th>
             <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+      </tr>
+    </thead>
+    <tbody>
           <tr *ngFor="let record of filteredRecords">
             <td class="att-id">{{ record.id }}</td>
             <td class="att-employee">
@@ -473,9 +473,9 @@
                 Delete
               </button>
             </td>
-          </tr>
-        </tbody>
-      </table>
+      </tr>
+    </tbody>
+  </table>
     </div>
   </section>
 </main>

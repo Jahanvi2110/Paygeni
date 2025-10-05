@@ -1,29 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
-
-interface UserAccount {
-  id: number | null;
-  username: string;
-  password: string;
-  role: string;
-  employeeId: number | null;
-}
+import { UserAccountService, UserAccount } from '../../../service/user-account.service';
 
 @Component({
   selector: 'app-user-account',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './user-account.component.html',
   styleUrls: ['./user-account.component.css']
 })
-export class UserAccountComponent {
-  users: UserAccount[] = [
-    { id: 1, username: 'john', password: '1234', role: 'ADMIN', employeeId: 101 },
-    { id: 2, username: 'jane', password: 'abcd', role: 'EMPLOYEE', employeeId: 102 }
-  ];
+export class UserAccountComponent implements OnInit {
+  users: UserAccount[] = [];
 
   newUser: UserAccount = {
     id: null,
@@ -33,16 +22,42 @@ export class UserAccountComponent {
     employeeId: null
   };
 
+  constructor(private userService: UserAccountService) {}
+
+  ngOnInit() {
+    this.loadUsers();
+  }
+
+  // Load all users from backend
+  loadUsers() {
+    this.userService.getAllUsers().subscribe({
+      next: (data: UserAccount[]) => this.users = data,
+      error: (err: any) => console.error('Failed to load users', err)
+    });
+  }
+
   // Save user (create or update)
   saveUser() {
     if (this.newUser.id) {
-      const index = this.users.findIndex(u => u.id === this.newUser.id);
-      if (index > -1) this.users[index] = { ...this.newUser };
+      // Update existing user
+      this.userService.updateUser(this.newUser.id, this.newUser).subscribe({
+        next: (updated: UserAccount) => {
+          const index = this.users.findIndex(u => u.id === updated.id);
+          if (index > -1) this.users[index] = updated;
+          this.resetForm();
+        },
+        error: (err: any) => console.error('Update failed', err)
+      });
     } else {
-      const newId = this.users.length ? Math.max(...this.users.map(u => u.id!)) + 1 : 1;
-      this.users.push({ ...this.newUser, id: newId });
+      // Create new user
+      this.userService.createUser(this.newUser).subscribe({
+        next: (created: UserAccount) => {
+          this.users.push(created);
+          this.resetForm();
+        },
+        error: (err: any) => console.error('Creation failed', err)
+      });
     }
-    this.resetForm();
   }
 
   // Edit user
@@ -52,7 +67,17 @@ export class UserAccountComponent {
 
   // Delete user
   deleteUser(id: number | null) {
-    this.users = this.users.filter(u => u.id !== id);
+    if (!id) return;
+    
+    if (confirm('Are you sure you want to delete this user?')) {
+      this.userService.deleteUser(id).subscribe({
+        next: () => {
+          this.users = this.users.filter(user => user.id !== id);
+          console.log('User deleted successfully');
+        },
+        error: (err: any) => console.error('Delete failed', err)
+      });
+    }
   }
 
   // Reset form
@@ -62,12 +87,12 @@ export class UserAccountComponent {
 
   // Get admin count
   getAdminCount(): number {
-    return this.users.filter(user => user.role === 'ADMIN').length;
+    return this.users.filter(user => user.role.toUpperCase() === 'ADMIN').length;
   }
 
   // Get employee count
   getEmployeeCount(): number {
-    return this.users.filter(user => user.role === 'EMPLOYEE').length;
+    return this.users.filter(user => user.role.toUpperCase() === 'EMPLOYEE').length;
   }
 
   // Track by function for better performance

@@ -1,36 +1,263 @@
-<div class="dashboard">
-  <div class="hero">
-    <h1>Welcome back to <span>PayGenie</span> 🎉</h1>
-    <p>Your smart payroll and HR management companion</p>
+<div class="admin-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Admin Dashboard</h1>
+      <p>Welcome back, {{ currentUser?.fullName || 'Admin' }}! 👑</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="selectTab('overview')" [class.active]="selectedTab === 'overview'">
+        📊 Overview
+      </button>
+      <button class="btn-secondary" (click)="selectTab('payroll')" [class.active]="selectedTab === 'payroll'">
+        💰 Payroll
+      </button>
+      <button class="btn-secondary" (click)="selectTab('attendance')" [class.active]="selectedTab === 'attendance'">
+        📅 Attendance
+      </button>
+      <button class="btn-secondary" (click)="selectTab('requests')" [class.active]="selectedTab === 'requests'">
+        📋 Requests
+      </button>
+    </div>
   </div>
 
-  <div class="card-grid">
-    <div class="card glass">
-      <div class="icon">👤</div>
-      <h2>User Accounts</h2>
-      <p>Manage profiles, roles, and credentials securely.</p>
-      <a routerLink="/user-account" class="btn">Explore</a>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Loading admin dashboard data...</p>
+  </div>
+
+  <!-- Overview Tab -->
+  <div *ngIf="!isLoading && selectedTab === 'overview'" class="tab-content">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <h3>{{ totalUsers }}</h3>
+          <p>Total Users</p>
+          <span class="stat-subtitle">{{ activeUsers }} Active</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <h3>{{ formatCurrency(totalPayroll) }}</h3>
+          <p>Total Payroll</p>
+          <span class="stat-subtitle">Avg: {{ formatCurrency(averageSalary) }}</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <h3>{{ attendanceRate.toFixed(1) }}%</h3>
+          <p>Attendance Rate</p>
+          <span class="stat-subtitle">This Month</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-content">
+          <h3>{{ pendingLeaveRequests }}</h3>
+          <p>Pending Requests</p>
+          <span class="stat-subtitle">Needs Review</span>
+        </div>
+      </div>
     </div>
 
-    <div class="card glass">
-      <div class="icon">👨‍💼</div>
-      <h2>Employees</h2>
-      <p>View, add, and manage employee records with ease.</p>
-      <a routerLink="/employees" class="btn">Explore</a>
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <h2>Quick Actions</h2>
+      <div class="action-grid">
+        <div class="action-card" (click)="selectTab('payroll')">
+          <div class="action-icon">💰</div>
+          <h3>Process Payroll</h3>
+          <p>Generate and manage payroll</p>
+        </div>
+        <div class="action-card" (click)="selectTab('requests')">
+          <div class="action-icon">📋</div>
+          <h3>Review Requests</h3>
+          <p>Approve leave and advance requests</p>
+        </div>
+        <div class="action-card" (click)="selectTab('attendance')">
+          <div class="action-icon">📅</div>
+          <h3>View Attendance</h3>
+          <p>Monitor employee attendance</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payroll Tab -->
+  <div *ngIf="!isLoading && selectedTab === 'payroll'" class="tab-content">
+    <div class="section-header">
+      <h2>Payroll Management</h2>
+      <p>Employee salary and payroll information ({{ payrolls.length }} records)</p>
     </div>
 
-    <div class="card glass">
-      <div class="icon">💰</div>
-      <h2>Payroll</h2>
-      <p>Generate accurate payslips with bonuses & deductions.</p>
-      <a routerLink="/payrolls" class="btn">Explore</a>
+    <!-- Payroll Statistics -->
+    <div class="payroll-stats">
+      <div class="stat-item">
+        <span class="stat-number">{{ payrolls.length }}</span>
+        <span class="stat-label">Total Payrolls</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ getPendingPayrollsCount() }}</span>
+        <span class="stat-label">Pending</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ getPaidPayrollsCount() }}</span>
+        <span class="stat-label">Paid</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ formatCurrency(getTotalPayrollAmount()) }}</span>
+        <span class="stat-label">Total Amount</span>
+      </div>
+  </div>
+
+    <div class="payroll-table" *ngIf="payrolls.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Payroll ID</th>
+            <th>Basic Salary</th>
+            <th>Allowances</th>
+            <th>Deductions</th>
+            <th>Net Salary</th>
+            <th>Period</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let payroll of payrolls">
+            <td>
+              <div class="employee-cell">
+                <strong>{{ getEmployeeName(payroll.employeeId) }}</strong>
+                <small>{{ getEmployeeEmail(payroll.employeeId) }}</small>
+              </div>
+            </td>
+            <td>
+              <span class="payroll-id">{{ payroll.payrollId || 'N/A' }}</span>
+            </td>
+            <td>{{ formatCurrency(payroll.basicSalary) }}</td>
+            <td>{{ formatCurrency(payroll.allowances) }}</td>
+            <td>{{ formatCurrency(payroll.deductions) }}</td>
+            <td><strong>{{ formatCurrency(payroll.netSalary) }}</strong></td>
+            <td>{{ payroll.payPeriod }}</td>
+            <td>
+              <span class="status-badge" [class]="getStatusClass(payroll.status)">
+                {{ payroll.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="card glass">
-      <div class="icon">📊</div>
-      <h2>Reports</h2>
-      <p>Analyze payroll and attendance insights in detail.</p>
-      <a routerLink="/reports" class="btn">Explore</a>
+    <!-- Empty State -->
+    <div *ngIf="payrolls.length === 0" class="empty-state">
+      <div class="empty-icon">💰</div>
+      <h3>No Payroll Records Found</h3>
+      <p>No payroll records have been generated yet.</p>
+      <button class="btn-primary" (click)="generateSamplePayrolls()">
+        Generate Sample Payrolls
+      </button>
+    </div>
+    </div>
+
+  <!-- Attendance Tab -->
+  <div *ngIf="!isLoading && selectedTab === 'attendance'" class="tab-content">
+    <div class="section-header">
+      <h2>Attendance Overview</h2>
+      <p>Employee attendance records and statistics</p>
+    </div>
+
+    <div class="attendance-summary">
+      <div class="summary-card">
+        <h3>Overall Attendance Rate</h3>
+        <div class="attendance-rate">
+          <span class="rate-number">{{ attendanceRate.toFixed(1) }}%</span>
+          <div class="rate-bar">
+            <div class="rate-fill" [style.width.%]="attendanceRate"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="attendance-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Hours Worked</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of attendance.slice(0, 50)">
+            <td>{{ getEmployeeName(record.employeeId) }}</td>
+            <td>{{ formatDate(record.date) }}</td>
+            <td>
+              <span class="status-badge" [class]="record.present ? 'status-active' : 'status-rejected'">
+                {{ record.present ? 'Present' : 'Absent' }}
+              </span>
+            </td>
+            <td>{{ record.hoursWorked }}h</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Requests Tab -->
+  <div *ngIf="!isLoading && selectedTab === 'requests'" class="tab-content">
+    <div class="section-header">
+      <h2>Leave & Advance Requests</h2>
+      <p>Review and manage employee requests</p>
+    </div>
+    
+    <div class="requests-grid">
+      <div *ngFor="let request of leaveRequests" class="request-card">
+        <div class="request-header">
+          <h3>{{ request.leaveType }}</h3>
+          <span class="status-badge" [class]="getStatusClass(request.status)">
+            {{ request.status }}
+          </span>
+        </div>
+        
+        <div class="request-details">
+          <div class="detail-row">
+            <span class="label">Employee:</span>
+            <span class="value">{{ getEmployeeName(request.employeeId) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Email:</span>
+            <span class="value">{{ getEmployeeEmail(request.employeeId) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Period:</span>
+            <span class="value">{{ formatDate(request.startDate) }} - {{ formatDate(request.endDate) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Reason:</span>
+            <span class="value">{{ request.reason }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Submitted:</span>
+            <span class="value">{{ formatDate(request.submittedAt) }}</span>
+          </div>
+        </div>
+        
+        <div class="request-actions" *ngIf="request.status === 'PENDING'">
+          <button class="btn-approve" (click)="approveRequest(request)">Approve</button>
+          <button class="btn-reject" (click)="rejectRequest(request)">Reject</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

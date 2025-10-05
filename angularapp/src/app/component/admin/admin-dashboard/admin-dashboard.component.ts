@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -14,32 +16,21 @@ export class AdminDashboardComponent implements OnInit {
   // User information
   currentUser: any = null;
   
-  // Dashboard statistics
-  totalEmployees = 42;
-  totalPayrolls = 10;
-  pendingApprovals = 3;
-  totalPayrollAmount = '₹2.4M';
+  // Employee list
+  // employees: any[] = []; // Removed - no longer displaying employees list
+  isLoading = false;
   
-  // Recent activities
-  recentActivities = [
-    {
-      icon: 'employee',
-      title: 'New employee added: John Smith joined the team',
-      time: '2 hours ago'
-    },
-    {
-      icon: 'payroll',
-      title: 'Payroll processed: December 2024 payroll completed',
-      time: '1 day ago'
-    },
-    {
-      icon: 'attendance',
-      title: 'Attendance updated: 15 employees marked present',
-      time: '3 hours ago'
-    }
-  ];
+  // Dashboard statistics
+  totalEmployees = 0;
+  totalAdmins = 0;
+  
+  // Recent activities (dynamic based on actual data)
+  recentActivities: any[] = [];
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
     // Get current user information
@@ -61,18 +52,50 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private loadDashboardData() {
-    // Simulate API calls
-    // this.employeeService.getTotalEmployees().subscribe(data => {
-    //   this.totalEmployees = data;
-    // });
+    this.isLoading = true;
     
-    // this.payrollService.getTotalPayrolls().subscribe(data => {
-    //   this.totalPayrolls = data;
-    // });
+    // Fetch all users (employees and admins)
+    this.http.get<any[]>(`${environment.apiUrl}/auth/users`)
+      .subscribe({
+        next: (users) => {
+          // this.employees = users; // Removed - no longer displaying employees list
+          this.totalEmployees = users.filter(user => user.role === 'EMPLOYEE').length;
+          this.totalAdmins = users.filter(user => user.role === 'ADMIN').length;
+          
+          // Generate recent activities based on actual signups
+          this.generateRecentActivities(users);
+          
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching users:', error);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private generateRecentActivities(users: any[]) {
+    this.recentActivities = [];
     
-    // this.approvalService.getPendingApprovals().subscribe(data => {
-    //   this.pendingApprovals = data;
-    // });
+    // Show recent signups (last 3 users)
+    const recentUsers = users.slice(-3).reverse();
+    
+    recentUsers.forEach((user, index) => {
+      this.recentActivities.push({
+        icon: 'employee',
+        title: `${user.role === 'ADMIN' ? 'New admin' : 'New employee'} signed up: ${user.firstName}`,
+        time: index === 0 ? 'Just now' : `${index + 1} hours ago`
+      });
+    });
+    
+    // If no users, show empty state message
+    if (users.length === 0) {
+      this.recentActivities.push({
+        icon: 'info',
+        title: 'No employees have signed up yet',
+        time: 'Waiting for signups'
+      });
+    }
   }
 
   // Method to refresh dashboard data

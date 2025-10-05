@@ -178,6 +178,69 @@
   font-size: 16px;
   color: #64748b;
   font-weight: 400;
+  margin-bottom: 20px;
+}
+
+/* Role Options */
+.role-options {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.role-option {
+  flex: 1;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.role-option:hover {
+  border-color: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.role-option.active {
+  border-color: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+}
+
+.role-icon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(79, 70, 229, 0.1);
+}
+
+.role-option.active .role-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.role-text {
+  flex: 1;
+}
+
+.role-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.role-desc {
+  font-size: 12px;
+  opacity: 0.8;
 }
 
 /* Form Styles */

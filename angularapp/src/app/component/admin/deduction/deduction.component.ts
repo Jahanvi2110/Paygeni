@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
 import { AuthService } from '../../../service/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 interface Deduction {
   id: string;
@@ -29,6 +31,14 @@ interface Deduction {
   notes?: string;
 }
 
+interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
+
 @Component({
   selector: 'app-deduction',
   standalone: true,
@@ -38,6 +48,8 @@ interface Deduction {
 })
 export class DeductionComponent implements OnInit {
   currentUser: any = null;
+  isLoading = true;
+  users: User[] = [];
   
   // Search and filter properties
   searchTerm = '';
@@ -54,197 +66,16 @@ export class DeductionComponent implements OnInit {
   // Filter options
   months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 
            'July', 'August', 'September', 'October', 'November', 'December'];
-  years = ['All', '2023', '2024', '2025'];
+  years = ['All', '2022', '2023', '2024', '2025'];
   statuses = ['All', 'Pending', 'Approved', 'Rejected'];
   departments = ['All', 'Engineering', 'Design', 'Human Resources', 'Marketing', 'Sales'];
   
-  deductions: Deduction[] = [
-    {
-      id: 'DED001',
-      employeeId: 'EMP001',
-      employeeName: 'John Smith',
-      employeePhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      department: 'Engineering',
-      month: 'December',
-      year: 2024,
-      tax: 8500,
-      pf: 2400,
-      esi: 1200,
-      professionalTax: 200,
-      loanDeduction: 5000,
-      advanceDeduction: 2000,
-      other: 800,
-      totalDeduction: 20100,
-      grossSalary: 95000,
-      netSalary: 74900,
-      status: 'Approved',
-      createdAt: '2024-12-01',
-      approvedBy: 'Sarah Johnson',
-      notes: 'Standard deductions applied'
-    },
-    {
-      id: 'DED002',
-      employeeId: 'EMP002',
-      employeeName: 'Alice Johnson',
-      employeePhoto: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-      department: 'Design',
-      month: 'December',
-      year: 2024,
-      tax: 7200,
-      pf: 2040,
-      esi: 1020,
-      professionalTax: 200,
-      loanDeduction: 3000,
-      advanceDeduction: 1500,
-      other: 600,
-      totalDeduction: 15560,
-      grossSalary: 85000,
-      netSalary: 69440,
-      status: 'Approved',
-      createdAt: '2024-12-01',
-      approvedBy: 'Mike Chen',
-      notes: 'Design team deductions'
-    },
-    {
-      id: 'DED003',
-      employeeId: 'EMP003',
-      employeeName: 'Bob Wilson',
-      employeePhoto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      department: 'Human Resources',
-      month: 'December',
-      year: 2024,
-      tax: 8100,
-      pf: 2160,
-      esi: 1080,
-      professionalTax: 200,
-      loanDeduction: 4000,
-      advanceDeduction: 1800,
-      other: 700,
-      totalDeduction: 17860,
-      grossSalary: 90000,
-      netSalary: 72140,
-      status: 'Pending',
-      createdAt: '2024-12-02',
-      notes: 'HR manager deductions pending approval'
-    },
-    {
-      id: 'DED004',
-      employeeId: 'EMP004',
-      employeeName: 'Charlie Brown',
-      employeePhoto: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
-      department: 'Engineering',
-      month: 'December',
-      year: 2024,
-      tax: 9450,
-      pf: 2520,
-      esi: 1260,
-      professionalTax: 200,
-      loanDeduction: 6000,
-      advanceDeduction: 2500,
-      other: 900,
-      totalDeduction: 22830,
-      grossSalary: 105000,
-      netSalary: 82170,
-      status: 'Approved',
-      createdAt: '2024-12-01',
-      approvedBy: 'Sarah Johnson',
-      notes: 'Senior engineer deductions'
-    },
-    {
-      id: 'DED005',
-      employeeId: 'EMP005',
-      employeeName: 'Diana Prince',
-      employeePhoto: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      department: 'Marketing',
-      month: 'December',
-      year: 2024,
-      tax: 7200,
-      pf: 1920,
-      esi: 960,
-      professionalTax: 200,
-      loanDeduction: 2500,
-      advanceDeduction: 1200,
-      other: 500,
-      totalDeduction: 14280,
-      grossSalary: 80000,
-      netSalary: 65720,
-      status: 'Approved',
-      createdAt: '2024-12-01',
-      approvedBy: 'Jennifer Lee',
-      notes: 'Marketing team deductions'
-    },
-    {
-      id: 'DED006',
-      employeeId: 'EMP006',
-      employeeName: 'Eve Wilson',
-      employeePhoto: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
-      department: 'Sales',
-      month: 'December',
-      year: 2024,
-      tax: 6300,
-      pf: 1680,
-      esi: 840,
-      professionalTax: 200,
-      loanDeduction: 2000,
-      advanceDeduction: 1000,
-      other: 400,
-      totalDeduction: 12420,
-      grossSalary: 70000,
-      netSalary: 57580,
-      status: 'Rejected',
-      createdAt: '2024-12-02',
-      notes: 'Deduction rejected due to incorrect calculations'
-    },
-    {
-      id: 'DED007',
-      employeeId: 'EMP007',
-      employeeName: 'Frank Miller',
-      employeePhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face',
-      department: 'Engineering',
-      month: 'December',
-      year: 2024,
-      tax: 10800,
-      pf: 2880,
-      esi: 1440,
-      professionalTax: 200,
-      loanDeduction: 8000,
-      advanceDeduction: 3000,
-      other: 1200,
-      totalDeduction: 27520,
-      grossSalary: 120000,
-      netSalary: 92480,
-      status: 'Approved',
-      createdAt: '2024-12-01',
-      approvedBy: 'Sarah Johnson',
-      notes: 'Lead developer deductions'
-    },
-    {
-      id: 'DED008',
-      employeeId: 'EMP008',
-      employeeName: 'Grace Lee',
-      employeePhoto: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face',
-      department: 'Marketing',
-      month: 'December',
-      year: 2024,
-      tax: 9900,
-      pf: 2640,
-      esi: 1320,
-      professionalTax: 200,
-      loanDeduction: 5000,
-      advanceDeduction: 2200,
-      other: 1000,
-      totalDeduction: 22260,
-      grossSalary: 110000,
-      netSalary: 87740,
-      status: 'Pending',
-      createdAt: '2024-12-02',
-      notes: 'Product manager deductions pending review'
-    }
-  ];
+  deductions: Deduction[] = [];
 
   constructor(
     private authService: AuthService,
-    private location: Location
+    private location: Location,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -260,6 +91,104 @@ export class DeductionComponent implements OnInit {
         id: 'DEMO001'
       };
     }
+    
+    this.loadUsers();
+  }
+
+  private loadUsers() {
+    this.isLoading = true;
+    console.log('🔄 Loading users for deductions from:', `${environment.apiUrl}/auth/users`);
+    
+    this.http.get<User[]>(`${environment.apiUrl}/auth/users`)
+      .subscribe({
+        next: (users) => {
+          console.log('✅ Users loaded for deductions:', users);
+          this.users = users;
+          this.generateDeductionData();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('❌ Error loading users for deductions:', error);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private generateDeductionData() {
+    // Generate deduction data based on actual users
+    this.deductions = this.users.map((user, index) => {
+      const grossSalary = this.getSalaryForRole(user.role);
+      const tax = Math.round(grossSalary * 0.15); // 15% tax
+      const pf = Math.round(grossSalary * 0.12); // 12% PF
+      const esi = Math.round(grossSalary * 0.05); // 5% ESI
+      const professionalTax = 200;
+      const loanDeduction = Math.round(grossSalary * 0.05); // 5% loan
+      const advanceDeduction = Math.round(grossSalary * 0.03); // 3% advance
+      const other = Math.round(grossSalary * 0.02); // 2% other
+      const totalDeduction = tax + pf + esi + professionalTax + loanDeduction + advanceDeduction + other;
+      const netSalary = grossSalary - totalDeduction;
+
+      return {
+        id: `DED${String(user.id).padStart(3, '0')}`,
+        employeeId: `EMP${String(user.id).padStart(3, '0')}`,
+        employeeName: user.firstName + (user.lastName ? ' ' + user.lastName : ''),
+        employeePhoto: `https://images.unsplash.com/photo-${1500000000000 + user.id}?w=150&h=150&fit=crop&crop=face`,
+        department: this.getDepartmentForRole(user.role),
+        month: 'December',
+        year: this.getRandomYear(),
+        tax: tax,
+        pf: pf,
+        esi: esi,
+        professionalTax: professionalTax,
+        loanDeduction: loanDeduction,
+        advanceDeduction: advanceDeduction,
+        other: other,
+        totalDeduction: totalDeduction,
+        grossSalary: grossSalary,
+        netSalary: netSalary,
+        status: this.getRandomStatus(),
+        createdAt: this.getRandomDate(),
+        approvedBy: this.getRandomStatus() === 'Approved' ? this.currentUser.name : undefined,
+        notes: `${user.role} deductions applied`
+      };
+    });
+  }
+
+  private getSalaryForRole(role: string): number {
+    const salaryRanges: { [key: string]: number } = {
+      'ADMIN': 80000,
+      'EMPLOYEE': 50000,
+      'MANAGER': 70000,
+      'HR': 60000
+    };
+    return salaryRanges[role] || 45000;
+  }
+
+  private getDepartmentForRole(role: string): string {
+    const departmentMap: { [key: string]: string } = {
+      'ADMIN': 'Human Resources',
+      'EMPLOYEE': 'Engineering',
+      'MANAGER': 'Management',
+      'HR': 'Human Resources'
+    };
+    return departmentMap[role] || 'General';
+  }
+
+  private getRandomStatus(): 'Pending' | 'Approved' | 'Rejected' {
+    const statuses: ('Pending' | 'Approved' | 'Rejected')[] = ['Pending', 'Approved', 'Approved', 'Approved']; // More approved
+    return statuses[Math.floor(Math.random() * statuses.length)];
+  }
+
+  private getRandomYear(): number {
+    const years = [2022, 2023, 2024, 2025];
+    return years[Math.floor(Math.random() * years.length)];
+  }
+
+  private getRandomDate(): string {
+    const year = this.getRandomYear();
+    const month = Math.floor(Math.random() * 12) + 1;
+    const day = Math.floor(Math.random() * 28) + 1;
+    return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
   }
 
   addDeduction() {

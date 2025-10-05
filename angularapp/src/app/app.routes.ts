@@ -32,10 +32,6 @@ export const routes: Routes = [
     loadComponent: () => import('./component/admin/payroll/payroll.component').then(m => m.PayrollComponent)
   },
   { 
-    path: 'salary', 
-    loadComponent: () => import('./component/admin/salarycomponent/salary.component').then(m => m.SalaryComponent)
-  },
-  { 
     path: 'attendance', 
     loadComponent: () => import('./component/admin/attendance/attendance.component').then(m => m.AttendanceComponent)
   },
@@ -50,5 +46,21 @@ export const routes: Routes = [
   { 
     path: 'employee-dashboard', 
     loadComponent: () => import('./component/admin/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent) 
+  },
+  { 
+    path: 'debug', 
+    loadComponent: () => import('./component/admin/debug/debug.component').then(m => m.DebugComponent) 
+  },
+  { 
+    path: 'fill-deductions', 
+    loadComponent: () => import('./component/admin/deduction-populator/deduction-populator.component').then(m => m.DeductionPopulatorComponent) 
+  },
+  { 
+    path: 'fill-employees', 
+    loadComponent: () => import('./component/admin/employee-populator/employee-populator.component').then(m => m.EmployeePopulatorComponent) 
+  },
+  { 
+    path: 'populate-all-data', 
+    loadComponent: () => import('./component/admin/comprehensive-data-populator/comprehensive-data-populator.component').then(m => m.ComprehensiveDataPopulatorComponent) 
   }
 ];

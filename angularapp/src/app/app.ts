@@ -1,11 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { RouterOutlet } from '@angular/router'; // RouterLink not needed
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],  // 👈 add CommonModule & RouterLink
+  imports: [CommonModule, RouterOutlet],  // Removed unused RouterLink
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

@@ -357,8 +357,8 @@
 
     <div class="table-container">
       <table class="deduction-table">
-        <thead>
-          <tr>
+    <thead>
+      <tr>
             <th (click)="sortDeductions('id')" class="sortable">
               Deduction ID
               <svg *ngIf="sortBy === 'id'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -412,9 +412,9 @@
               </svg>
             </th>
             <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+      </tr>
+    </thead>
+    <tbody>
           <tr *ngFor="let ded of filteredDeductions">
             <td class="ded-id">{{ ded.id }}</td>
             <td class="ded-employee">
@@ -482,9 +482,9 @@
                 Delete
               </button>
             </td>
-          </tr>
-        </tbody>
-      </table>
+      </tr>
+    </tbody>
+  </table>
     </div>
   </section>
 </main>

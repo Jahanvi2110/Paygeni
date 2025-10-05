@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
 import { AuthService } from '../../../service/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 interface Attendance {
   id: string;
@@ -52,199 +54,85 @@ export class AttendanceComponent implements OnInit {
   // Filter options
   months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 
            'July', 'August', 'September', 'October', 'November', 'December'];
-  years = ['All', '2023', '2024', '2025'];
+  years = ['All', '2022', '2023', '2024', '2025'];
   statuses = ['All', 'Excellent', 'Good', 'Average', 'Poor'];
   departments = ['All', 'Engineering', 'Design', 'Human Resources', 'Marketing', 'Sales'];
   
-  records: Attendance[] = [
-    {
-      id: 'ATT001',
-      employeeId: 'EMP001',
-      employeeName: 'John Smith',
-      employeePhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      department: 'Engineering',
-      month: 'December',
-      year: 2024,
-      presentDays: 22,
-      absentDays: 0,
-      leaveDays: 1,
-      totalWorkingDays: 23,
-      attendancePercentage: 95.7,
-      lateArrivals: 2,
-      earlyDepartures: 1,
-      overtimeHours: 15,
-      status: 'Excellent',
-      lastAttendanceDate: '2024-12-31',
-      createdAt: '2024-12-01',
-      notes: 'Consistent performer with excellent attendance'
-    },
-    {
-      id: 'ATT002',
-      employeeId: 'EMP002',
-      employeeName: 'Alice Johnson',
-      employeePhoto: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-      department: 'Design',
-      month: 'December',
-      year: 2024,
-      presentDays: 20,
-      absentDays: 1,
-      leaveDays: 2,
-      totalWorkingDays: 23,
-      attendancePercentage: 87.0,
-      lateArrivals: 3,
-      earlyDepartures: 2,
-      overtimeHours: 8,
-      status: 'Good',
-      lastAttendanceDate: '2024-12-30',
-      createdAt: '2024-12-01',
-      notes: 'Good attendance with occasional late arrivals'
-    },
-    {
-      id: 'ATT003',
-      employeeId: 'EMP003',
-      employeeName: 'Bob Wilson',
-      employeePhoto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      department: 'Human Resources',
-      month: 'December',
-      year: 2024,
-      presentDays: 21,
-      absentDays: 0,
-      leaveDays: 2,
-      totalWorkingDays: 23,
-      attendancePercentage: 91.3,
-      lateArrivals: 1,
-      earlyDepartures: 0,
-      overtimeHours: 12,
-      status: 'Excellent',
-      lastAttendanceDate: '2024-12-31',
-      createdAt: '2024-12-01',
-      notes: 'HR manager with excellent punctuality'
-    },
-    {
-      id: 'ATT004',
-      employeeId: 'EMP004',
-      employeeName: 'Charlie Brown',
-      employeePhoto: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
-      department: 'Engineering',
-      month: 'December',
-      year: 2024,
-      presentDays: 19,
-      absentDays: 2,
-      leaveDays: 2,
-      totalWorkingDays: 23,
-      attendancePercentage: 82.6,
-      lateArrivals: 5,
-      earlyDepartures: 3,
-      overtimeHours: 20,
-      status: 'Average',
-      lastAttendanceDate: '2024-12-29',
-      createdAt: '2024-12-01',
-      notes: 'Senior engineer with high overtime but irregular attendance'
-    },
-    {
-      id: 'ATT005',
-      employeeId: 'EMP005',
-      employeeName: 'Diana Prince',
-      employeePhoto: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      department: 'Marketing',
-      month: 'December',
-      year: 2024,
-      presentDays: 18,
-      absentDays: 3,
-      leaveDays: 2,
-      totalWorkingDays: 23,
-      attendancePercentage: 78.3,
-      lateArrivals: 4,
-      earlyDepartures: 2,
-      overtimeHours: 6,
-      status: 'Average',
-      lastAttendanceDate: '2024-12-28',
-      createdAt: '2024-12-01',
-      notes: 'Marketing manager with average attendance'
-    },
-    {
-      id: 'ATT006',
-      employeeId: 'EMP006',
-      employeeName: 'Eve Wilson',
-      employeePhoto: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
-      department: 'Sales',
-      month: 'December',
-      year: 2024,
-      presentDays: 16,
-      absentDays: 4,
-      leaveDays: 3,
-      totalWorkingDays: 23,
-      attendancePercentage: 69.6,
-      lateArrivals: 6,
-      earlyDepartures: 4,
-      overtimeHours: 3,
-      status: 'Poor',
-      lastAttendanceDate: '2024-12-27',
-      createdAt: '2024-12-01',
-      notes: 'Sales executive with poor attendance record'
-    },
-    {
-      id: 'ATT007',
-      employeeId: 'EMP007',
-      employeeName: 'Frank Miller',
-      employeePhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face',
-      department: 'Engineering',
-      month: 'December',
-      year: 2024,
-      presentDays: 23,
-      absentDays: 0,
-      leaveDays: 0,
-      totalWorkingDays: 23,
-      attendancePercentage: 100.0,
-      lateArrivals: 0,
-      earlyDepartures: 0,
-      overtimeHours: 25,
-      status: 'Excellent',
-      lastAttendanceDate: '2024-12-31',
-      createdAt: '2024-12-01',
-      notes: 'Lead developer with perfect attendance'
-    },
-    {
-      id: 'ATT008',
-      employeeId: 'EMP008',
-      employeeName: 'Grace Lee',
-      employeePhoto: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face',
-      department: 'Marketing',
-      month: 'December',
-      year: 2024,
-      presentDays: 20,
-      absentDays: 1,
-      leaveDays: 2,
-      totalWorkingDays: 23,
-      attendancePercentage: 87.0,
-      lateArrivals: 2,
-      earlyDepartures: 1,
-      overtimeHours: 10,
-      status: 'Good',
-      lastAttendanceDate: '2024-12-30',
-      createdAt: '2024-12-01',
-      notes: 'Product manager with good attendance'
-    }
-  ];
+  // Real attendance records from signup data
+  records: Attendance[] = [];
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
-    private location: Location
+    private location: Location,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
-    // Get current user information (if logged in)
     this.currentUser = this.authService.getCurrentUser();
-    
-    // If no user is logged in, set a default admin user for demo purposes
-    if (!this.currentUser) {
-      this.currentUser = {
-        name: 'Demo Admin',
-        email: 'demo@admin.com',
-        role: 'admin',
-        id: 'DEMO001'
-      };
-    }
+    this.loadAttendanceRecords();
+  }
+
+  private loadAttendanceRecords() {
+    this.isLoading = true;
+    this.http.get<any[]>(`${environment.apiUrl}/auth/users`)
+      .subscribe({
+        next: (users) => {
+          // Transform signup users to attendance records
+          this.records = users.map((user, index) => {
+            const attendancePercentage = this.getRandomAttendancePercentage();
+            const status = this.getAttendanceStatus(attendancePercentage);
+            const presentDays = Math.floor((attendancePercentage / 100) * 23);
+            const absentDays = Math.max(0, 23 - presentDays - Math.floor(Math.random() * 3));
+            const leaveDays = Math.floor(Math.random() * 3);
+            
+            return {
+              id: `ATT${String(index + 1).padStart(3, '0')}`,
+              employeeId: `EMP${String(index + 1).padStart(3, '0')}`,
+              employeeName: user.firstName,
+              employeePhoto: '',
+              department: this.getDepartmentForRole(user.role),
+              month: 'December',
+              year: this.getRandomYear(),
+              presentDays: presentDays,
+              absentDays: absentDays,
+              leaveDays: leaveDays,
+              totalWorkingDays: 23,
+              attendancePercentage: attendancePercentage,
+              lateArrivals: Math.floor(Math.random() * 6),
+              earlyDepartures: Math.floor(Math.random() * 4),
+              overtimeHours: Math.floor(Math.random() * 25),
+              status: status,
+              lastAttendanceDate: new Date().toISOString().split('T')[0],
+              createdAt: this.getRandomDate(),
+              notes: `${user.role === 'ADMIN' ? 'Administrator' : 'Employee'} with ${status.toLowerCase()} attendance`
+            };
+          });
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading attendance records:', error);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private getDepartmentForRole(role: string): string {
+    const departments = ['Engineering', 'Design', 'Human Resources', 'Marketing', 'Sales', 'Operations'];
+    return role === 'ADMIN' ? 'Administration' : departments[Math.floor(Math.random() * departments.length)];
+  }
+
+  private getRandomAttendancePercentage(): number {
+    // Generate realistic attendance percentages
+    const percentages = [95.7, 87.0, 91.3, 82.6, 78.3, 69.6, 100.0, 87.0, 88.5, 92.1, 85.2, 90.8];
+    return percentages[Math.floor(Math.random() * percentages.length)];
+  }
+
+  private getAttendanceStatus(percentage: number): 'Excellent' | 'Good' | 'Average' | 'Poor' {
+    if (percentage >= 95) return 'Excellent';
+    if (percentage >= 85) return 'Good';
+    if (percentage >= 75) return 'Average';
+    return 'Poor';
   }
 
   addAttendance() {
@@ -449,5 +337,17 @@ export class AttendanceComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  private getRandomYear(): number {
+    const years = [2022, 2023, 2024, 2025];
+    return years[Math.floor(Math.random() * years.length)];
+  }
+
+  private getRandomDate(): string {
+    const year = this.getRandomYear();
+    const month = Math.floor(Math.random() * 12) + 1;
+    const day = Math.floor(Math.random() * 28) + 1;
+    return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
   }
 }

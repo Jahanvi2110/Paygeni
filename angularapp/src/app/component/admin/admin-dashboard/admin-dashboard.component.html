@@ -10,7 +10,7 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-section">
+      <div class="nav-section">cd
         <h3 class="nav-title">Overview</h3>
         <a routerLink="/admin-dashboard" class="nav-item active">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -51,14 +51,6 @@
           </svg>
           <span>Payroll</span>
         </a>
-        <a routerLink="/salary" class="nav-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
-          <span>Salary Components</span>
-        </a>
         <a routerLink="/deduction" class="nav-item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
@@ -97,7 +89,7 @@
           <span>Employee View</span>
         </a>
       </div>
-    </nav>
+  </nav>
 
                 <div class="sidebar-footer">
                   <button class="logout-btn" (click)="logout()">
@@ -128,7 +120,7 @@
                     </div>
                   </div>
       </div>
-    </header>
+</header>
 
     <!-- Stats Cards -->
     <section class="stats-section">
@@ -142,26 +134,43 @@
           </div>
           <div class="stat-content">
             <h3 class="stat-number">{{ totalEmployees }}</h3>
-            <p class="stat-label">Total Employees</p>
-            <span class="stat-change positive">+12% from last month</span>
+            <p class="stat-label">Signed Up Employees</p>
+            <span class="stat-change positive">Real-time data</span>
           </div>
         </div>
 
-        <div class="stat-card">
+    <div class="stat-card">
           <div class="stat-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="1" x2="12" y2="23"/>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="8.5" cy="7" r="4"/>
+              <polyline points="17,11 19,13 23,9"/>
             </svg>
           </div>
           <div class="stat-content">
-            <h3 class="stat-number">{{ totalPayrolls }}</h3>
-            <p class="stat-label">Payrolls Processed</p>
-            <span class="stat-change positive">+8% from last month</span>
+            <h3 class="stat-number">{{ totalAdmins }}</h3>
+            <p class="stat-label">Admin Users</p>
+            <span class="stat-change positive">Real-time data</span>
           </div>
-        </div>
+    </div>
 
-        <div class="stat-card">
+    <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ totalEmployees + totalAdmins }}</h3>
+            <p class="stat-label">Total Users</p>
+            <span class="stat-change positive">All signed up users</span>
+          </div>
+    </div>
+
+    <div class="stat-card">
           <div class="stat-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
@@ -169,24 +178,9 @@
             </svg>
           </div>
           <div class="stat-content">
-            <h3 class="stat-number">{{ pendingApprovals }}</h3>
-            <p class="stat-label">Pending Approvals</p>
-            <span class="stat-change negative">-3 from yesterday</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/>
-              <line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-          </div>
-          <div class="stat-content">
-            <h3 class="stat-number">₹2.4M</h3>
-            <p class="stat-label">Total Payroll Amount</p>
-            <span class="stat-change positive">+15% from last month</span>
+            <h3 class="stat-number">{{ recentActivities.length }}</h3>
+            <p class="stat-label">Recent Activities</p>
+            <span class="stat-change positive">Based on signups</span>
           </div>
         </div>
       </div>
@@ -235,19 +229,6 @@
           </div>
         </a>
 
-        <a routerLink="/salary" class="action-card">
-          <div class="action-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/>
-              <line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-          </div>
-          <div class="action-content">
-            <h3>Salary Components</h3>
-            <p>Manage salary structures and components</p>
-          </div>
-        </a>
 
         <a routerLink="/deduction" class="action-card">
           <div class="action-icon">
@@ -275,14 +256,19 @@
             <p>Access detailed reports and analytics</p>
           </div>
         </a>
-      </div>
-    </section>
+    </div>
+  </section>
 
     <!-- Recent Activity -->
     <section class="activity-section">
-      <h2 class="section-title">Recent Activity</h2>
+      <h2 class="section-title">Recent Signups</h2>
       <div class="activity-list">
-        <div class="activity-item">
+        <div *ngIf="recentActivities.length === 0" class="empty-activity">
+          <div class="empty-icon">📝</div>
+          <p>No recent signups to display</p>
+        </div>
+        
+        <div *ngFor="let activity of recentActivities" class="activity-item">
           <div class="activity-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -290,37 +276,11 @@
             </svg>
           </div>
           <div class="activity-content">
-            <p><strong>New employee added:</strong> John Smith joined the team</p>
-            <span class="activity-time">2 hours ago</span>
+            <p><strong>{{ activity.title }}</strong></p>
+            <span class="activity-time">{{ activity.time }}</span>
           </div>
         </div>
-
-        <div class="activity-item">
-          <div class="activity-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="1" x2="12" y2="23"/>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
-          </div>
-          <div class="activity-content">
-            <p><strong>Payroll processed:</strong> December 2024 payroll completed</p>
-            <span class="activity-time">1 day ago</span>
-          </div>
-        </div>
-
-        <div class="activity-item">
-          <div class="activity-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12,6 12,12 16,14"/>
-            </svg>
-          </div>
-          <div class="activity-content">
-            <p><strong>Attendance updated:</strong> 15 employees marked present</p>
-            <span class="activity-time">3 hours ago</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+    </div>
+  </section>
+</main>
 </div>

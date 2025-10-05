@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 import { AuthService } from '../../../service/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-employees',
@@ -24,6 +26,9 @@ export class EmployeesComponent implements OnInit {
   
   // Modal properties
   selectedEmployee: any = null;
+  showEditModal = false;
+  editingEmployee: any = null;
+  isSubmittingEdit = false;
   
   // Department options
   departments = ['All', 'Engineering', 'Design', 'Human Resources', 'Marketing', 'Sales'];
@@ -31,187 +36,231 @@ export class EmployeesComponent implements OnInit {
   // Status options
   statuses = ['All', 'Active', 'Inactive', 'On Leave'];
   
-  employees = [
-    { 
-      id: 'EMP001', 
-      name: 'John Smith', 
-      role: 'Senior Software Developer',
-      department: 'Engineering',
-      email: 'john@company.com',
-      phone: '1234567890',
-      salary: 95000,
-      joinDate: '2023-01-15',
-      status: 'Active',
-      photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      location: 'New York, NY',
-      manager: 'Sarah Johnson',
-      skills: ['JavaScript', 'React', 'Node.js', 'TypeScript'],
-      experience: '5 years',
-      lastPromotion: '2023-06-01',
-      performance: 4.8,
-      projects: 12,
-      teamSize: 3
-    },
-    { 
-      id: 'EMP002', 
-      name: 'Alice Johnson', 
-      role: 'Senior UI/UX Designer',
-      department: 'Design',
-      email: 'alice@company.com',
-      phone: '1234567891',
-      salary: 85000,
-      joinDate: '2023-02-20',
-      status: 'Active',
-      photo: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-      location: 'San Francisco, CA',
-      manager: 'Mike Chen',
-      skills: ['Figma', 'Sketch', 'Adobe Creative Suite', 'Prototyping'],
-      experience: '4 years',
-      lastPromotion: '2023-08-15',
-      performance: 4.6,
-      projects: 8,
-      teamSize: 2
-    },
-    { 
-      id: 'EMP003', 
-      name: 'Bob Wilson', 
-      role: 'HR Manager',
-      department: 'Human Resources',
-      email: 'bob@company.com',
-      phone: '1234567892',
-      salary: 90000,
-      joinDate: '2022-11-10',
-      status: 'Active',
-      photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      location: 'Chicago, IL',
-      manager: 'CEO',
-      skills: ['Recruitment', 'Employee Relations', 'HRIS', 'Training'],
-      experience: '8 years',
-      lastPromotion: '2022-11-10',
-      performance: 4.9,
-      projects: 15,
-      teamSize: 5
-    },
-    { 
-      id: 'EMP004', 
-      name: 'Charlie Brown', 
-      role: 'DevOps Engineer',
-      department: 'Engineering',
-      email: 'charlie@company.com',
-      phone: '1234567893',
-      salary: 105000,
-      joinDate: '2023-03-05',
-      status: 'Active',
-      photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
-      location: 'Austin, TX',
-      manager: 'Sarah Johnson',
-      skills: ['AWS', 'Docker', 'Kubernetes', 'Terraform'],
-      experience: '6 years',
-      lastPromotion: '2023-09-01',
-      performance: 4.7,
-      projects: 10,
-      teamSize: 4
-    },
-    { 
-      id: 'EMP005', 
-      name: 'Diana Prince', 
-      role: 'Marketing Manager',
-      department: 'Marketing',
-      email: 'diana@company.com',
-      phone: '1234567894',
-      salary: 80000,
-      joinDate: '2023-04-10',
-      status: 'Active',
-      photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      location: 'Los Angeles, CA',
-      manager: 'Jennifer Lee',
-      skills: ['Digital Marketing', 'SEO', 'Analytics', 'Content Strategy'],
-      experience: '5 years',
-      lastPromotion: '2023-07-20',
-      performance: 4.5,
-      projects: 6,
-      teamSize: 3
-    },
-    { 
-      id: 'EMP006', 
-      name: 'Eve Wilson', 
-      role: 'Sales Executive',
-      department: 'Sales',
-      email: 'eve@company.com',
-      phone: '1234567895',
-      salary: 70000,
-      joinDate: '2023-05-15',
-      status: 'On Leave',
-      photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
-      location: 'Miami, FL',
-      manager: 'Robert Davis',
-      skills: ['Sales', 'CRM', 'Negotiation', 'Lead Generation'],
-      experience: '3 years',
-      lastPromotion: '2023-05-15',
-      performance: 4.2,
-      projects: 4,
-      teamSize: 1
-    },
-    { 
-      id: 'EMP007', 
-      name: 'Frank Miller', 
-      role: 'Lead Developer',
-      department: 'Engineering',
-      email: 'frank@company.com',
-      phone: '1234567896',
-      salary: 120000,
-      joinDate: '2022-08-20',
-      status: 'Active',
-      photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face',
-      location: 'Seattle, WA',
-      manager: 'Sarah Johnson',
-      skills: ['Python', 'Django', 'PostgreSQL', 'Microservices'],
-      experience: '7 years',
-      lastPromotion: '2023-01-10',
-      performance: 4.9,
-      projects: 18,
-      teamSize: 6
-    },
-    { 
-      id: 'EMP008', 
-      name: 'Grace Lee', 
-      role: 'Product Manager',
-      department: 'Marketing',
-      email: 'grace@company.com',
-      phone: '1234567897',
-      salary: 110000,
-      joinDate: '2023-01-05',
-      status: 'Inactive',
-      photo: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face',
-      location: 'Boston, MA',
-      manager: 'Jennifer Lee',
-      skills: ['Product Strategy', 'Agile', 'User Research', 'Analytics'],
-      experience: '6 years',
-      lastPromotion: '2023-03-15',
-      performance: 4.4,
-      projects: 9,
-      teamSize: 4
-    }
-  ];
+  // Real employees from signup data
+  employees: any[] = [];
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
-    private location: Location
+    private location: Location,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
-    // Get current user information (if logged in)
     this.currentUser = this.authService.getCurrentUser();
+    this.loadEmployees();
+  }
+
+  refreshEmployees() {
+    console.log('🔄 Refreshing employees...');
+    this.loadEmployees();
+  }
+
+  private loadEmployees() {
+    this.isLoading = true;
     
-    // If no user is logged in, set a default admin user for demo purposes
-    if (!this.currentUser) {
-      this.currentUser = {
-        name: 'Demo Admin',
-        email: 'demo@admin.com',
-        role: 'admin',
-        id: 'DEMO001'
-      };
+    // Use a timeout to prevent hanging
+    const timeout = setTimeout(() => {
+      if (this.isLoading) {
+        console.warn('Loading timeout - falling back to users');
+        this.loadUsersAsEmployees();
+      }
+    }, 5000); // 5 second timeout
+    
+    // Try to get users directly (faster approach)
+    this.http.get<any[]>(`${environment.apiUrl}/auth/users`)
+      .subscribe({
+        next: (users) => {
+          clearTimeout(timeout);
+          // Filter out admin users and transform to employee format
+          const employeeUsers = users.filter(user => user.role !== 'ADMIN');
+          this.employees = employeeUsers.map((user, index) => ({
+            id: user.id,
+            name: user.firstName,
+            role: 'Employee',
+            department: this.getDepartmentForRole(user.role),
+            email: user.email,
+            phone: user.phoneNumber,
+            salary: this.getSalaryForRole(user.role),
+            joinDate: this.getRandomJoinDate(),
+            status: 'Active',
+            photo: null,
+            location: 'Company Office',
+            manager: 'Department Manager',
+            skills: this.getSkillsForRole(user.role),
+            experience: '1+ years',
+            lastPromotion: this.getRandomJoinDate(),
+            performance: 4.5,
+            projects: Math.floor(Math.random() * 10) + 1,
+            teamSize: 1
+          }));
+
+          // Add 3 extra employees
+          this.addExtraEmployees();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          clearTimeout(timeout);
+          console.error('Error loading users:', error);
+          // Show empty state instead of hanging
+          this.employees = [];
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private loadUsersAsEmployees() {
+    this.http.get<any[]>(`${environment.apiUrl}/auth/users`)
+      .subscribe({
+        next: (users) => {
+          // Filter out admin users and transform signup users to employee format
+          const employeeUsers = users.filter(user => user.role !== 'ADMIN');
+          this.employees = employeeUsers.map((user, index) => ({
+            id: user.id, // Use actual numeric ID from database
+            name: user.firstName,
+            role: 'Employee',
+            department: this.getDepartmentForRole(user.role),
+            email: user.email,
+            phone: user.phoneNumber,
+            salary: this.getSalaryForRole(user.role),
+            joinDate: this.getRandomJoinDate(),
+            status: 'Active',
+            photo: null,
+            location: 'Company Office',
+            manager: 'Department Manager',
+            skills: this.getSkillsForRole(user.role),
+            experience: '1+ years',
+            lastPromotion: this.getRandomJoinDate(),
+            performance: 4.5,
+            projects: Math.floor(Math.random() * 10) + 1,
+            teamSize: 1
+          }));
+
+          // Add 3 extra employees
+          this.addExtraEmployees();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading users:', error);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private getRandomJoinDate(): string {
+    // Generate random join dates between 2018 and 2024
+    const startYear = 2018;
+    const endYear = 2024;
+    const year = Math.floor(Math.random() * (endYear - startYear + 1)) + startYear;
+    const month = Math.floor(Math.random() * 12) + 1;
+    const day = Math.floor(Math.random() * 28) + 1; // Use 28 to avoid month-end issues
+    return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  }
+
+  private addExtraEmployees() {
+    const extraEmployees = [
+      {
+        id: 1001,
+        name: 'Sarah Johnson',
+        role: 'Employee',
+        department: 'Marketing',
+        email: 'sarah.johnson@company.com',
+        phone: '+91 98765 43210',
+        salary: 45000,
+        joinDate: this.getRandomJoinDate(),
+        status: 'Active',
+        photo: null,
+        location: 'Company Office',
+        manager: 'Marketing Manager',
+        skills: ['Digital Marketing', 'Content Creation', 'Social Media'],
+        experience: '2+ years',
+        lastPromotion: this.getRandomJoinDate(),
+        performance: 4.2,
+        projects: 8,
+        teamSize: 1
+      },
+      {
+        id: 1002,
+        name: 'Michael Chen',
+        role: 'Employee',
+        department: 'Engineering',
+        email: 'michael.chen@company.com',
+        phone: '+91 98765 43211',
+        salary: 55000,
+        joinDate: this.getRandomJoinDate(),
+        status: 'Active',
+        photo: null,
+        location: 'Company Office',
+        manager: 'Engineering Manager',
+        skills: ['Java', 'Spring Boot', 'Angular', 'Database'],
+        experience: '3+ years',
+        lastPromotion: this.getRandomJoinDate(),
+        performance: 4.7,
+        projects: 12,
+        teamSize: 1
+      },
+      {
+        id: 1003,
+        name: 'Priya Sharma',
+        role: 'Employee',
+        department: 'Human Resources',
+        email: 'priya.sharma@company.com',
+        phone: '+91 98765 43212',
+        salary: 42000,
+        joinDate: this.getRandomJoinDate(),
+        status: 'Active',
+        photo: null,
+        location: 'Company Office',
+        manager: 'HR Manager',
+        skills: ['Recruitment', 'Employee Relations', 'Training'],
+        experience: '1+ years',
+        lastPromotion: this.getRandomJoinDate(),
+        performance: 4.0,
+        projects: 5,
+        teamSize: 1
+      }
+    ];
+
+    // Add extra employees to the existing list
+    this.employees = [...this.employees, ...extraEmployees];
+  }
+
+  private getExperienceFromJoinDate(hireDate: string): string {
+    if (!hireDate) return '1+ years';
+    const joinDate = new Date(hireDate);
+    const now = new Date();
+    const years = Math.floor((now.getTime() - joinDate.getTime()) / (1000 * 60 * 60 * 24 * 365));
+    return years > 0 ? `${years}+ years` : 'Less than 1 year';
+  }
+
+  private getLastPromotionDate(hireDate: string): string {
+    if (!hireDate) return this.getRandomJoinDate();
+    const joinDate = new Date(hireDate);
+    const promotionDate = new Date(joinDate.getTime() + (Math.random() * 365 * 24 * 60 * 60 * 1000)); // Random date after join
+    return promotionDate.toISOString().split('T')[0];
+  }
+
+  private getDepartmentForRole(role: string): string {
+    const departments = ['Engineering', 'Design', 'Human Resources', 'Marketing', 'Sales', 'Operations'];
+    return role === 'ADMIN' ? 'Administration' : departments[Math.floor(Math.random() * departments.length)];
+  }
+
+  private getSalaryForRole(role: string): number {
+    return role === 'ADMIN' ? 100000 : 75000;
+  }
+
+  private getSkillsForRole(role: string): string[] {
+    if (role === 'ADMIN') {
+      return ['Management', 'Leadership', 'Strategic Planning', 'Team Building'];
     }
+    const skillSets = [
+      ['JavaScript', 'React', 'Node.js', 'TypeScript'],
+      ['Figma', 'Sketch', 'Adobe Creative Suite', 'Prototyping'],
+      ['Recruitment', 'Employee Relations', 'HRIS', 'Training'],
+      ['Digital Marketing', 'SEO', 'Social Media', 'Analytics'],
+      ['Sales Strategy', 'Customer Relations', 'CRM', 'Negotiation']
+    ];
+    return skillSets[Math.floor(Math.random() * skillSets.length)];
   }
 
   addEmployee() {
@@ -228,8 +277,8 @@ export class EmployeesComponent implements OnInit {
   }
 
   editEmployee(employee: any) {
-    alert(`Edit employee: ${employee.name}`);
-    // Navigate to edit employee form
+    this.editingEmployee = { ...employee }; // Create a copy for editing
+    this.showEditModal = true;
   }
 
   deleteEmployee(employee: any) {
@@ -412,5 +461,70 @@ export class EmployeesComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  // Edit Employee Modal Methods
+  closeEditModal() {
+    this.showEditModal = false;
+    this.editingEmployee = null;
+    this.isSubmittingEdit = false;
+  }
+
+  submitEditEmployee() {
+    if (!this.editingEmployee) return;
+
+    // Validate required fields
+    if (!this.editingEmployee.name || !this.editingEmployee.email || !this.editingEmployee.phone) {
+      alert('❌ Please fill in all required fields (Name, Email, Phone)');
+      return;
+    }
+
+    this.isSubmittingEdit = true;
+
+    // Prepare the update data
+    const updateData = {
+      firstName: this.editingEmployee.name,
+      email: this.editingEmployee.email,
+      phoneNumber: this.editingEmployee.phone,
+      department: this.editingEmployee.department,
+      salary: this.editingEmployee.salary,
+      status: this.editingEmployee.status,
+      joinDate: this.editingEmployee.joinDate
+    };
+
+    console.log('🚀 Updating employee:', updateData);
+
+    // Call the backend API to update user
+    this.http.put<any>(`${environment.apiUrl}/auth/users/${this.editingEmployee.id}`, updateData)
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Employee updated successfully:', response);
+          
+          // Update the employee in the local array
+          const index = this.employees.findIndex(emp => emp.id === this.editingEmployee.id);
+          if (index !== -1) {
+            this.employees[index] = { ...this.employees[index], ...updateData };
+          }
+          
+          alert(`✅ Employee ${this.editingEmployee.name} updated successfully!`);
+          this.closeEditModal();
+          this.isSubmittingEdit = false;
+        },
+        error: (error) => {
+          console.error('❌ Error updating employee:', error);
+          alert('❌ Error updating employee: ' + (error.error?.message || error.message));
+          this.isSubmittingEdit = false;
+        }
+      });
+  }
+
+  resetEditForm() {
+    if (this.editingEmployee) {
+      // Reset to original values
+      const originalEmployee = this.employees.find(emp => emp.id === this.editingEmployee.id);
+      if (originalEmployee) {
+        this.editingEmployee = { ...originalEmployee };
+      }
+    }
   }
 }
