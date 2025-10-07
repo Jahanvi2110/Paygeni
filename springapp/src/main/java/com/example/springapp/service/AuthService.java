@@ -16,16 +16,22 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     public User signup(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
+        if (user.getEmail() != null && userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public User login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User login(String emailOrUsername, String password) {
+        // Try to find user by email first, then by username
+        User user = userRepository.findByEmail(emailOrUsername)
+                .orElse(userRepository.findByUsername(emailOrUsername)
+                        .orElseThrow(() -> new RuntimeException("User not found")));
+        
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }

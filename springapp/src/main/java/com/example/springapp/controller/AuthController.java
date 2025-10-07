@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:4201", "http://localhost:3000"}, allowCredentials = "true")
 public class AuthController {
  
     @Autowired
@@ -24,8 +24,25 @@ public class AuthController {
     private UserRepository userRepository;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user) {
+    public ResponseEntity<?> signup(@RequestBody Map<String, Object> userData) {
         try {
+            User user = new User();
+            user.setUsername((String) userData.get("username"));
+            user.setEmail((String) userData.get("email"));
+            user.setPassword((String) userData.get("password"));
+            user.setRole((String) userData.getOrDefault("role", "EMPLOYEE"));
+            user.setEmployeeId((Long) userData.getOrDefault("employeeId", 1L)); // Default employee ID
+            user.setFirstName((String) userData.get("firstName"));
+            user.setLastName((String) userData.get("lastName"));
+            user.setPhoneNumber((String) userData.get("phoneNumber"));
+            user.setDepartment((String) userData.getOrDefault("department", "General"));
+            
+            // Set required fields with default values
+            user.setStatus("ACTIVE");
+            user.setCreatedAt(java.time.LocalDate.now());
+            user.setCreatedBy("SYSTEM");
+            user.setNotes("User created via signup");
+            
             User savedUser = authService.signup(user);
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {

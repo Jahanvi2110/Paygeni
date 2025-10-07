@@ -11,10 +11,78 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/admin/deductions")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:4201", "http://localhost:3000"}, allowCredentials = "true")
 public class DeductionController {
 
     @Autowired
     private DeductionService deductionService;
+
+    /**
+     * Get all deductions
+     */
+    @GetMapping
+    public ResponseEntity<List<Deduction>> getAllDeductions() {
+        try {
+            List<Deduction> deductions = deductionService.getAllDeductions();
+            return ResponseEntity.ok(deductions);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * Get deduction by ID
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Deduction> getDeductionById(@PathVariable Long id) {
+        try {
+            return deductionService.getDeductionById(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * Create new deduction
+     */
+    @PostMapping
+    public ResponseEntity<Deduction> createDeduction(@RequestBody Deduction deduction) {
+        try {
+            Deduction createdDeduction = deductionService.createDeduction(deduction);
+            return ResponseEntity.ok(createdDeduction);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * Update deduction
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Deduction> updateDeduction(@PathVariable Long id, @RequestBody Deduction deduction) {
+        try {
+            deduction.setId(id);
+            Deduction updatedDeduction = deductionService.updateDeduction(deduction);
+            return ResponseEntity.ok(updatedDeduction);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * Delete deduction
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDeduction(@PathVariable Long id) {
+        try {
+            deductionService.deleteDeduction(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     /**
      * Populate deductions table with sample data

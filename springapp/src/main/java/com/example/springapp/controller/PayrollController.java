@@ -14,7 +14,7 @@ import java.util.Map;
 @RequestMapping("/api/payroll")
 @CrossOrigin(origins = "http://localhost:4200")
 public class PayrollController {
-    
+
     @Autowired
     private PayrollService payrollService;
     
