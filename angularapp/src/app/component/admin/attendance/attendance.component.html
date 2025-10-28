@@ -679,3 +679,352 @@
     </div>
   </div>
 </div>
+
+<!-- Edit Attendance Modal -->
+<div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="modal-content edit-modal" (click)="$event.stopPropagation()" *ngIf="editingAttendance">
+    <div class="modal-header">
+      <h3 class="modal-title">✏️ Edit Attendance Record</h3>
+      <button class="modal-close" (click)="closeEditModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form class="edit-form" (ngSubmit)="submitEditAttendance()">
+        <div class="form-section">
+          <h4>👤 Employee Information</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="employeeName">Employee Name</label>
+              <input 
+                type="text" 
+                id="employeeName" 
+                [(ngModel)]="editingAttendance.employeeName" 
+                name="employeeName"
+                readonly
+                class="form-input readonly">
+            </div>
+            <div class="form-group">
+              <label for="employeeId">Employee ID</label>
+              <input 
+                type="text" 
+                id="employeeId" 
+                [(ngModel)]="editingAttendance.employeeId" 
+                name="employeeId"
+                readonly
+                class="form-input readonly">
+            </div>
+            <div class="form-group">
+              <label for="department">Department</label>
+              <select 
+                id="department" 
+                [(ngModel)]="editingAttendance.department" 
+                name="department"
+                class="form-select">
+                <option value="Engineering">Engineering</option>
+                <option value="Design">Design</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
+                <option value="Operations">Operations</option>
+                <option value="Administration">Administration</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>📅 Attendance Details</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="month">Month</label>
+              <select 
+                id="month" 
+                [(ngModel)]="editingAttendance.month" 
+                name="month"
+                class="form-select">
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="year">Year</label>
+              <input 
+                type="number" 
+                id="year" 
+                [(ngModel)]="editingAttendance.year" 
+                name="year"
+                min="2020"
+                max="2030"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="totalWorkingDays">Total Working Days</label>
+              <input 
+                type="number" 
+                id="totalWorkingDays" 
+                [(ngModel)]="editingAttendance.totalWorkingDays" 
+                name="totalWorkingDays"
+                min="1"
+                max="31"
+                class="form-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>📊 Attendance Statistics</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="presentDays">Present Days *</label>
+              <input 
+                type="number" 
+                id="presentDays" 
+                [(ngModel)]="editingAttendance.presentDays" 
+                name="presentDays"
+                required
+                min="0"
+                max="31"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="absentDays">Absent Days *</label>
+              <input 
+                type="number" 
+                id="absentDays" 
+                [(ngModel)]="editingAttendance.absentDays" 
+                name="absentDays"
+                required
+                min="0"
+                max="31"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="leaveDays">Leave Days *</label>
+              <input 
+                type="number" 
+                id="leaveDays" 
+                [(ngModel)]="editingAttendance.leaveDays" 
+                name="leaveDays"
+                required
+                min="0"
+                max="31"
+                class="form-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>⏰ Additional Details</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="lateArrivals">Late Arrivals</label>
+              <input 
+                type="number" 
+                id="lateArrivals" 
+                [(ngModel)]="editingAttendance.lateArrivals" 
+                name="lateArrivals"
+                min="0"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="earlyDepartures">Early Departures</label>
+              <input 
+                type="number" 
+                id="earlyDepartures" 
+                [(ngModel)]="editingAttendance.earlyDepartures" 
+                name="earlyDepartures"
+                min="0"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="lastAttendanceDate">Last Attendance Date</label>
+              <input 
+                type="date" 
+                id="lastAttendanceDate" 
+                [(ngModel)]="editingAttendance.lastAttendanceDate" 
+                name="lastAttendanceDate"
+                class="form-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>📝 Notes</h4>
+          <div class="form-group">
+            <label for="notes">Additional Notes</label>
+            <textarea 
+              id="notes" 
+              [(ngModel)]="editingAttendance.notes" 
+              name="notes"
+              rows="3"
+              class="form-textarea"
+              placeholder="Enter any additional notes about this attendance record..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>📈 Calculated Fields</h4>
+          <div class="calculated-fields">
+            <div class="calculated-item">
+              <span class="calculated-label">Attendance Percentage:</span>
+              <span class="calculated-value">{{ editingAttendance.attendancePercentage }}%</span>
+            </div>
+            <div class="calculated-item">
+              <span class="calculated-label">Total Days:</span>
+              <span class="calculated-value">{{ (editingAttendance.presentDays || 0) + (editingAttendance.absentDays || 0) + (editingAttendance.leaveDays || 0) }}</span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="modal-btn secondary" (click)="closeEditModal()" [disabled]="isSubmittingEdit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+        Cancel
+      </button>
+      <button class="modal-btn reset" (click)="resetEditForm()" [disabled]="isSubmittingEdit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+        Reset
+      </button>
+      <button class="modal-btn primary" (click)="submitEditAttendance()" [disabled]="isSubmittingEdit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+        {{ isSubmittingEdit ? 'Updating...' : 'Update Record' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Attendance Modal -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
+  <div class="modal-content edit-modal" (click)="$event.stopPropagation()" *ngIf="newAttendance">
+    <div class="modal-header">
+      <h3 class="modal-title">➕ Add Attendance Record</h3>
+      <button class="modal-close" (click)="closeAddModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form class="edit-form" (ngSubmit)="submitAddAttendance()">
+        <div class="form-section">
+          <h4>👤 Employee Information</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="addAttName">Employee Name *</label>
+              <input type="text" id="addAttName" [(ngModel)]="newAttendance.employeeName" name="addAttName" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="addAttId">Employee ID *</label>
+              <input type="text" id="addAttId" [(ngModel)]="newAttendance.employeeId" name="addAttId" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="addAttDept">Department</label>
+              <select id="addAttDept" [(ngModel)]="newAttendance.department" name="addAttDept" class="form-select">
+                <option value="Engineering">Engineering</option>
+                <option value="Design">Design</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
+                <option value="Operations">Operations</option>
+                <option value="Administration">Administration</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>📅 Period & Stats</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="addAttMonth">Month</label>
+              <select id="addAttMonth" [(ngModel)]="newAttendance.month" name="addAttMonth" class="form-select">
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="addAttYear">Year</label>
+              <input type="number" id="addAttYear" [(ngModel)]="newAttendance.year" name="addAttYear" min="2020" max="2030" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="addAttTwd">Total Working Days</label>
+              <input type="number" id="addAttTwd" [(ngModel)]="newAttendance.totalWorkingDays" name="addAttTwd" min="1" max="31" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="addAttPresent">Present Days</label>
+              <input type="number" id="addAttPresent" [(ngModel)]="newAttendance.presentDays" name="addAttPresent" min="0" max="31" class="form-input" (ngModelChange)="recalcAddAttendance()">
+            </div>
+            <div class="form-group">
+              <label for="addAttAbsent">Absent Days</label>
+              <input type="number" id="addAttAbsent" [(ngModel)]="newAttendance.absentDays" name="addAttAbsent" min="0" max="31" class="form-input" (ngModelChange)="recalcAddAttendance()">
+            </div>
+            <div class="form-group">
+              <label for="addAttLeave">Leave Days</label>
+              <input type="number" id="addAttLeave" [(ngModel)]="newAttendance.leaveDays" name="addAttLeave" min="0" max="31" class="form-input" (ngModelChange)="recalcAddAttendance()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>📝 Notes</h4>
+          <div class="form-group">
+            <label for="addAttNotes">Additional Notes</label>
+            <textarea id="addAttNotes" [(ngModel)]="newAttendance.notes" name="addAttNotes" rows="3" class="form-textarea"></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>📈 Calculated</h4>
+          <div class="calculated-fields">
+            <div class="calculated-item">
+              <span class="calculated-label">Attendance %:</span>
+              <span class="calculated-value">{{ newAttendance.attendancePercentage }}%</span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="modal-btn secondary" (click)="closeAddModal()" [disabled]="isSubmittingAdd">Cancel</button>
+      <button class="modal-btn primary" (click)="submitAddAttendance()" [disabled]="isSubmittingAdd">{{ isSubmittingAdd ? 'Creating...' : 'Create Record' }}</button>
+    </div>
+  </div>
+</div>

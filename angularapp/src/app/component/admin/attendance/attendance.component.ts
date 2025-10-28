@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 interface Attendance {
-  id: string;
+  id: number; // Changed to number to match backend Long ID
   employeeId: string;
   employeeName: string;
   employeePhoto: string;
@@ -50,6 +50,12 @@ export class AttendanceComponent implements OnInit {
   
   // Modal properties
   selectedAttendance: any = null;
+  showEditModal = false;
+  editingAttendance: any = null;
+  isSubmittingEdit = false;
+  showAddModal = false;
+  newAttendance: any = null;
+  isSubmittingAdd = false;
   
   // Filter options
   months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 
@@ -75,6 +81,44 @@ export class AttendanceComponent implements OnInit {
 
   private loadAttendanceRecords() {
     this.isLoading = true;
+    
+    // Load real attendance records from database
+    this.http.get<any[]>(`${environment.apiUrl}/attendance`)
+      .subscribe({
+        next: (attendanceRecords) => {
+          console.log('✅ Loaded attendance records from database:', attendanceRecords);
+          this.records = attendanceRecords.map((record) => ({
+            id: record.id,
+            employeeId: record.employeeId,
+            employeeName: record.employeeName,
+            employeePhoto: record.employeePhoto || '',
+            department: record.department,
+            month: record.month,
+            year: record.year,
+            presentDays: record.presentDays,
+            absentDays: record.absentDays,
+            leaveDays: record.leaveDays,
+            totalWorkingDays: record.totalWorkingDays,
+            attendancePercentage: record.attendancePercentage,
+            lateArrivals: record.lateArrivals,
+            earlyDepartures: record.earlyDepartures,
+            overtimeHours: record.overtimeHours,
+            status: this.getAttendanceStatus(record.attendancePercentage),
+            lastAttendanceDate: record.lastAttendanceDate,
+            createdAt: record.createdAt,
+            notes: record.notes
+          }));
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('❌ Error loading attendance records:', error);
+          // Fallback to generating from users if attendance endpoint fails
+          this.loadUsersAsAttendance();
+        }
+      });
+  }
+
+  private loadUsersAsAttendance() {
     this.http.get<any[]>(`${environment.apiUrl}/auth/users`)
       .subscribe({
         next: (users) => {
@@ -87,8 +131,8 @@ export class AttendanceComponent implements OnInit {
             const leaveDays = Math.floor(Math.random() * 3);
             
             return {
-              id: `ATT${String(index + 1).padStart(3, '0')}`,
-              employeeId: `EMP${String(index + 1).padStart(3, '0')}`,
+              id: user.id, // Use actual user ID from database (Long type)
+              employeeId: `EMP${String(user.id).padStart(3, '0')}`,
               employeeName: user.firstName,
               employeePhoto: '',
               department: this.getDepartmentForRole(user.role),
@@ -136,7 +180,27 @@ export class AttendanceComponent implements OnInit {
   }
 
   addAttendance() {
-    alert('Add Attendance functionality will be implemented here');
+    this.newAttendance = {
+      employeeId: '',
+      employeeName: '',
+      employeePhoto: '',
+      department: 'Engineering',
+      month: 'December',
+      year: new Date().getFullYear(),
+      presentDays: 0,
+      absentDays: 0,
+      leaveDays: 0,
+      totalWorkingDays: 23,
+      attendancePercentage: 0,
+      lateArrivals: 0,
+      earlyDepartures: 0,
+      overtimeHours: 0,
+      status: 'Average',
+      lastAttendanceDate: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString().split('T')[0],
+      notes: ''
+    };
+    this.showAddModal = true;
   }
 
   viewAttendance(attendance: any) {
@@ -148,12 +212,174 @@ export class AttendanceComponent implements OnInit {
   }
 
   editAttendance(attendance: any) {
-    alert(`Edit attendance: ${attendance.employeeName}`);
+    console.log('🔄 Opening edit modal for attendance:', attendance);
+    this.editingAttendance = { ...attendance }; // Create a copy for editing
+    this.showEditModal = true;
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
+    this.editingAttendance = null;
+    this.isSubmittingEdit = false;
+  }
+
+  closeAddModal() {
+    this.showAddModal = false;
+    this.newAttendance = null;
+    this.isSubmittingAdd = false;
+  }
+
+  submitEditAttendance() {
+    if (!this.editingAttendance) return;
+
+    // Validate required fields (employee name is auto-populated, so not required in validation)
+    if (!this.editingAttendance.presentDays || 
+        !this.editingAttendance.absentDays || !this.editingAttendance.leaveDays) {
+      alert('❌ Please fill in all required fields (Present Days, Absent Days, Leave Days)');
+      return;
+    }
+
+    this.isSubmittingEdit = true;
+
+    // Calculate attendance percentage
+    const totalDays = this.editingAttendance.presentDays + this.editingAttendance.absentDays + this.editingAttendance.leaveDays;
+    this.editingAttendance.attendancePercentage = totalDays > 0 ? 
+      Math.round((this.editingAttendance.presentDays / totalDays) * 100 * 10) / 10 : 0;
+
+    // Prepare the update data
+    const updateData = {
+      employeeId: this.editingAttendance.employeeId,
+      employeeName: this.editingAttendance.employeeName,
+      department: this.editingAttendance.department,
+      month: this.editingAttendance.month,
+      year: this.editingAttendance.year,
+      presentDays: this.editingAttendance.presentDays,
+      absentDays: this.editingAttendance.absentDays,
+      leaveDays: this.editingAttendance.leaveDays,
+      totalWorkingDays: this.editingAttendance.totalWorkingDays,
+      attendancePercentage: this.editingAttendance.attendancePercentage,
+      lateArrivals: this.editingAttendance.lateArrivals,
+      earlyDepartures: this.editingAttendance.earlyDepartures,
+      lastAttendanceDate: this.editingAttendance.lastAttendanceDate,
+      notes: this.editingAttendance.notes
+    };
+
+    console.log('🚀 Updating attendance:', updateData);
+
+    // Call the backend API to update attendance
+    this.http.put<any>(`${environment.apiUrl}/attendance/${this.editingAttendance.id}`, updateData)
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Attendance updated successfully:', response);
+          
+          // Update the attendance in the local array
+          const index = this.records.findIndex(record => record.id === this.editingAttendance.id);
+          if (index !== -1) {
+            this.records[index] = { ...this.records[index], ...updateData };
+          }
+          
+          alert(`✅ Attendance record for ${this.editingAttendance.employeeName} updated successfully!`);
+          this.closeEditModal();
+          this.isSubmittingEdit = false;
+        },
+        error: (error) => {
+          console.error('❌ Error updating attendance:', error);
+          alert('❌ Error updating attendance: ' + (error.error?.message || error.message));
+          this.isSubmittingEdit = false;
+        }
+      });
+  }
+
+  resetEditForm() {
+    if (this.editingAttendance) {
+      // Find the original attendance data
+      const originalAttendance = this.records.find(record => record.id === this.editingAttendance.id);
+      if (originalAttendance) {
+        this.editingAttendance = { ...originalAttendance }; // Reset to original values
+      }
+    }
+  }
+
+  public recalcAddAttendance() {
+    if (!this.newAttendance) return;
+    const totalDays = (this.newAttendance.presentDays || 0) + (this.newAttendance.absentDays || 0) + (this.newAttendance.leaveDays || 0);
+    this.newAttendance.attendancePercentage = totalDays > 0 ? Math.round((this.newAttendance.presentDays / totalDays) * 100 * 10) / 10 : 0;
+    this.newAttendance.status = this.getAttendanceStatus(this.newAttendance.attendancePercentage);
+  }
+
+  submitAddAttendance() {
+    if (!this.newAttendance) return;
+    if (!this.newAttendance.employeeId || !this.newAttendance.employeeName) {
+      alert('❌ Please fill in required fields: Employee ID and Employee Name');
+      return;
+    }
+    this.isSubmittingAdd = true;
+    this.recalcAddAttendance();
+
+    const createData = {
+      employeeId: this.newAttendance.employeeId,
+      employeeName: this.newAttendance.employeeName,
+      department: this.newAttendance.department,
+      month: this.newAttendance.month,
+      year: this.newAttendance.year,
+      presentDays: this.newAttendance.presentDays,
+      absentDays: this.newAttendance.absentDays,
+      leaveDays: this.newAttendance.leaveDays,
+      totalWorkingDays: this.newAttendance.totalWorkingDays,
+      attendancePercentage: this.newAttendance.attendancePercentage,
+      lateArrivals: this.newAttendance.lateArrivals,
+      earlyDepartures: this.newAttendance.earlyDepartures,
+      overtimeHours: this.newAttendance.overtimeHours,
+      lastAttendanceDate: this.newAttendance.lastAttendanceDate,
+      notes: this.newAttendance.notes
+    };
+
+    this.http.post<any>(`${environment.apiUrl}/attendance`, createData)
+      .subscribe({
+        next: (response) => {
+          const created = {
+            id: response?.id ?? Math.floor(Math.random()*100000),
+            createdAt: response?.createdAt ?? new Date().toISOString().split('T')[0],
+            status: this.getAttendanceStatus(createData.attendancePercentage),
+            employeePhoto: '',
+            ...createData
+          };
+          this.records.unshift(created as any);
+          alert(`✅ Attendance record created for ${created.employeeName}`);
+          this.closeAddModal();
+          this.isSubmittingAdd = false;
+        },
+        error: (error) => {
+          console.error('❌ Error creating attendance:', error);
+          alert('❌ Error creating attendance: ' + (error.error?.message || error.message));
+          this.isSubmittingAdd = false;
+        }
+      });
   }
 
   deleteAttendance(attendance: any) {
-    if (confirm(`Are you sure you want to delete attendance record for ${attendance.employeeName}?`)) {
-      alert(`Attendance record for ${attendance.employeeName} deleted successfully`);
+    if (confirm(`Are you sure you want to delete attendance record for ${attendance.employeeName}?\n\nThis action cannot be undone.`)) {
+      console.log('🗑️ Deleting attendance:', attendance);
+      
+      // Call the backend API to delete attendance
+      this.http.delete<any>(`${environment.apiUrl}/attendance/${attendance.id}`)
+        .subscribe({
+          next: (response) => {
+            console.log('✅ Attendance deleted successfully:', response);
+            
+            // Remove the attendance from the local array
+            const index = this.records.findIndex(record => record.id === attendance.id);
+            if (index !== -1) {
+              this.records.splice(index, 1);
+            }
+            
+            alert(`✅ Attendance record for ${attendance.employeeName} deleted successfully!`);
+          },
+          error: (error) => {
+            console.error('❌ Error deleting attendance:', error);
+            alert('❌ Error deleting attendance: ' + (error.error?.message || error.message));
+          }
+        });
     }
   }
 
@@ -163,7 +389,7 @@ export class AttendanceComponent implements OnInit {
       const matchesSearch = record.employeeName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                            record.employeeId.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                            record.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                           record.id.toLowerCase().includes(this.searchTerm.toLowerCase());
+                           record.id.toString().includes(this.searchTerm);
       
       const matchesMonth = this.selectedMonth === 'All' || record.month === this.selectedMonth;
       const matchesYear = this.selectedYear === 'All' || record.year.toString() === this.selectedYear;

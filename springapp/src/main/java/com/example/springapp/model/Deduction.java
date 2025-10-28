@@ -22,8 +22,14 @@ public class Deduction {
     private Integer year;
     private Double tax;
     private Double pf;
+    private Double esi;
+    private Double professionalTax;
+    private Double loanDeduction;
+    private Double advanceDeduction;
     private Double other;
     private Double totalDeduction;
+    private Double grossSalary;
+    private Double netSalary;
     private String deductionType; // TAX, PF, INSURANCE, OTHER
     private String status; // PENDING, APPROVED, REJECTED
     private String description;
@@ -69,8 +75,26 @@ public class Deduction {
     public Double getPf() { return pf; }
     public void setPf(Double pf) { this.pf = pf; }
     
+    public Double getEsi() { return esi; }
+    public void setEsi(Double esi) { this.esi = esi; }
+    
+    public Double getProfessionalTax() { return professionalTax; }
+    public void setProfessionalTax(Double professionalTax) { this.professionalTax = professionalTax; }
+    
+    public Double getLoanDeduction() { return loanDeduction; }
+    public void setLoanDeduction(Double loanDeduction) { this.loanDeduction = loanDeduction; }
+    
+    public Double getAdvanceDeduction() { return advanceDeduction; }
+    public void setAdvanceDeduction(Double advanceDeduction) { this.advanceDeduction = advanceDeduction; }
+    
     public Double getOther() { return other; }
     public void setOther(Double other) { this.other = other; }
+    
+    public Double getGrossSalary() { return grossSalary; }
+    public void setGrossSalary(Double grossSalary) { this.grossSalary = grossSalary; }
+    
+    public Double getNetSalary() { return netSalary; }
+    public void setNetSalary(Double netSalary) { this.netSalary = netSalary; }
     
     public Double getTotalDeduction() { return totalDeduction; }
     public void setTotalDeduction(Double totalDeduction) { this.totalDeduction = totalDeduction; }

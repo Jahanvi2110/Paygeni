@@ -20,20 +20,20 @@ public class DeductionService {
         this.payrollRepo = payrollRepo;
     }
 
-    public List<Deduction> getAllDeduction() {
+    public List<Deduction> getAllDeductions() {
         return deductionRepo.findAll();
     }
 
-    public Optional<Deduction> getDeduction(Long id) {
+    public Optional<Deduction> getDeductionById(Long id) {
         return deductionRepo.findById(id);
     }
 
-    public Deduction createDeduction(Deduction dud) {
-        return deductionRepo.save(dud);
+    public Deduction createDeduction(Deduction deduction) {
+        return deductionRepo.save(deduction);
     }
 
-    public Deduction updateDeduction(Deduction dud) {
-        return deductionRepo.save(dud);
+    public Deduction updateDeduction(Deduction deduction) {
+        return deductionRepo.save(deduction);
     }
 
     // ✅ Link deduction with payroll

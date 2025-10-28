@@ -30,6 +30,7 @@ public class EmployeeService {
     public Employee updateEmployee(Long id, Employee employee) {
         return repo.findById(id).map(existing -> {
             existing.setFirstName(employee.getFirstName());
+            existing.setLastName(employee.getLastName());
             existing.setEmail(employee.getEmail());
             existing.setPhoneNumber(employee.getPhoneNumber());
             existing.setDesignation(employee.getDesignation());
@@ -50,5 +51,9 @@ public class EmployeeService {
 
     public Employee save(Employee employee) {
         return repo.save(employee);
+    }
+
+    public Optional<Employee> findByEmail(String email) {
+        return repo.findByEmail(email);
     }
 }

@@ -153,3 +153,107 @@
     </div>
   </div>
 </main>
+
+<!-- Payroll Details Modal -->
+<div class="modal-overlay" *ngIf="showPayrollModal" (click)="closePayrollModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()" *ngIf="selectedPayroll">
+    <div class="modal-header">
+      <h3>💰 Payroll Details</h3>
+      <button class="modal-close" (click)="closePayrollModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="employee-section">
+        <div class="employee-header">
+          <div class="employee-avatar-large">
+            <span>{{ selectedPayroll.employee.charAt(0) }}</span>
+          </div>
+          <div class="employee-info">
+            <h4>{{ selectedPayroll.employee }}</h4>
+            <p class="employee-id">Employee ID: EMP{{ selectedPayroll.id.toString().padStart(4, '0') }}</p>
+            <p class="employee-department">{{ selectedPayroll.department || 'General Department' }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="payroll-details">
+        <div class="detail-section">
+          <h5>📅 Pay Period Information</h5>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Pay Period:</span>
+              <span class="detail-value">{{ selectedPayroll.month }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Generated Date:</span>
+              <span class="detail-value">{{ getCurrentDate() }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h5>📧 Contact Information</h5>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">{{ selectedPayroll.email || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value">{{ selectedPayroll.phone || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h5>💰 Salary Breakdown</h5>
+          <div class="salary-breakdown">
+            <div class="salary-item">
+              <span class="salary-label">Basic Salary:</span>
+              <span class="salary-amount positive">₹{{ selectedPayroll.basic | number }}</span>
+            </div>
+            <div class="salary-item">
+              <span class="salary-label">Allowances:</span>
+              <span class="salary-amount positive">₹{{ selectedPayroll.allowance | number }}</span>
+            </div>
+            <div class="salary-item">
+              <span class="salary-label">Gross Salary:</span>
+              <span class="salary-amount positive">₹{{ (selectedPayroll.basic + selectedPayroll.allowance) | number }}</span>
+            </div>
+            <div class="salary-item">
+              <span class="salary-label">Deductions:</span>
+              <span class="salary-amount negative">-₹{{ selectedPayroll.deductions | number }}</span>
+            </div>
+            <div class="salary-item total">
+              <span class="salary-label">Net Salary:</span>
+              <span class="salary-amount total">₹{{ selectedPayroll.netSalary | number }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="modal-btn secondary" (click)="closePayrollModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+        Close
+      </button>
+      <button class="modal-btn primary" (click)="downloadSlip(selectedPayroll)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7,10 12,15 17,10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download Slip
+      </button>
+    </div>
+  </div>
+</div>

@@ -16,10 +16,11 @@ export class UserAccountComponent implements OnInit {
 
   newUser: UserAccount = {
     id: null,
-    username: '',
+    firstName: '',
+    phoneNumber: '',
+    email: '',
     password: '',
-    role: '',
-    employeeId: null
+    role: ''
   };
 
   constructor(private userService: UserAccountService) {}
@@ -82,7 +83,7 @@ export class UserAccountComponent implements OnInit {
 
   // Reset form
   resetForm() {
-    this.newUser = { id: null, username: '', password: '', role: '', employeeId: null };
+    this.newUser = { id: null, firstName: '', phoneNumber: '', email: '', password: '', role: '' };
   }
 
   // Get admin count

@@ -329,8 +329,8 @@
           </svg>
           Refresh
         </button>
-      </div>
-      
+  </div>
+
       <!-- Empty State -->
       <div *ngIf="!isLoading && employees.length === 0" class="empty-state">
         <div class="empty-icon">👥</div>
@@ -865,6 +865,77 @@
             </svg>
             {{ isSubmittingEdit ? 'Saving...' : 'Save Changes' }}
           </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Employee Modal -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
+  <div class="modal-content edit-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Add Employee</h3>
+      <button class="modal-close" (click)="closeAddModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="newEmployee">
+      <form class="edit-form" (ngSubmit)="submitAddEmployee()">
+        <div class="form-grid">
+          <div class="form-section">
+            <h4 class="section-title">Basic Information</h4>
+            <div class="form-group">
+              <label for="add-first">First Name *</label>
+              <input type="text" id="add-first" [(ngModel)]="newEmployee.firstName" name="addFirst" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="add-last">Last Name</label>
+              <input type="text" id="add-last" [(ngModel)]="newEmployee.lastName" name="addLast" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="add-email">Email *</label>
+              <input type="email" id="add-email" [(ngModel)]="newEmployee.email" name="addEmail" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="add-phone">Phone *</label>
+              <input type="tel" id="add-phone" [(ngModel)]="newEmployee.phoneNumber" name="addPhone" class="form-input" required>
+            </div>
+          </div>
+          <div class="form-section">
+            <h4 class="section-title">Work Information</h4>
+            <div class="form-group">
+              <label for="add-dept">Department</label>
+              <select id="add-dept" [(ngModel)]="newEmployee.department" name="addDept" class="form-select">
+                <option value="Engineering">Engineering</option>
+                <option value="Design">Design</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
+                <option value="Operations">Operations</option>
+                <option value="Administration">Administration</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="add-salary">Salary (₹)</label>
+              <input type="number" id="add-salary" [(ngModel)]="newEmployee.salary" name="addSalary" class="form-input" min="0" step="1000">
+            </div>
+            <div class="form-group">
+              <label for="add-hire">Hire Date</label>
+              <input type="date" id="add-hire" [(ngModel)]="newEmployee.hireDate" name="addHire" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="add-address">Location</label>
+              <input type="text" id="add-address" [(ngModel)]="newEmployee.address" name="addAddress" class="form-input">
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn cancel" (click)="closeAddModal()">Cancel</button>
+          <button type="submit" class="modal-btn save" [disabled]="isSubmittingAdd">{{ isSubmittingAdd ? 'Creating...' : 'Create Employee' }}</button>
         </div>
       </form>
     </div>

@@ -5,37 +5,40 @@ import { environment } from '@environments/environment';
 
 export interface UserAccount {
   id: number | null;
-  username: string;
+  firstName: string;
+  phoneNumber: string;
+  email: string;
   password: string;
   role: string;
-  employeeId: number | null;
+  employeeId?: number;
+  username?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserAccountService {
-  private apiUrl = `${environment.apiUrl}/users`; // Adjust endpoint as needed
+  private apiUrl = `${environment.apiUrl}/auth`; // Use auth endpoints
 
   constructor(private http: HttpClient) { }
 
   getAllUsers(): Observable<UserAccount[]> {
-    return this.http.get<UserAccount[]>(this.apiUrl);
+    return this.http.get<UserAccount[]>(`${this.apiUrl}/users`);
   }
 
   getUserById(id: number): Observable<UserAccount> {
-    return this.http.get<UserAccount>(`${this.apiUrl}/${id}`);
+    return this.http.get<UserAccount>(`${this.apiUrl}/users/${id}`);
   }
 
   createUser(user: UserAccount): Observable<UserAccount> {
-    return this.http.post<UserAccount>(this.apiUrl, user);
+    return this.http.post<UserAccount>(`${this.apiUrl}/signup`, user);
   }
 
   updateUser(id: number, user: UserAccount): Observable<UserAccount> {
-    return this.http.put<UserAccount>(`${this.apiUrl}/${id}`, user);
+    return this.http.put<UserAccount>(`${this.apiUrl}/users/${id}`, user);
   }
 
   deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
   }
 }

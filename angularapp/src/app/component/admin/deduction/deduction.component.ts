@@ -62,6 +62,12 @@ export class DeductionComponent implements OnInit {
   
   // Modal properties
   selectedDeduction: any = null;
+  showEditModal = false;
+  editingDeduction: any = null;
+  isSubmittingEdit = false;
+  showAddModal = false;
+  newDeduction: any = null;
+  isSubmittingAdd = false;
   
   // Filter options
   months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 
@@ -97,6 +103,46 @@ export class DeductionComponent implements OnInit {
 
   private loadUsers() {
     this.isLoading = true;
+    
+    // Load real deductions from database
+    this.http.get<any[]>(`${environment.apiUrl}/admin/deductions`)
+      .subscribe({
+        next: (deductions) => {
+          console.log('✅ Loaded deductions from database:', deductions);
+          this.deductions = deductions.map((ded) => ({
+            id: ded.id,
+            employeeId: ded.employeeId,
+            employeeName: ded.employeeName,
+            employeePhoto: ded.employeePhoto || '',
+            department: ded.department,
+            month: ded.month,
+            year: ded.year,
+            tax: ded.tax || 0,
+            pf: ded.pf || 0,
+            esi: ded.esi || 0,
+            professionalTax: ded.professionalTax || 0,
+            loanDeduction: ded.loanDeduction || 0,
+            advanceDeduction: ded.advanceDeduction || 0,
+            other: ded.other || 0,
+            totalDeduction: ded.totalDeduction || 0,
+            grossSalary: ded.grossSalary || 0,
+            netSalary: ded.netSalary || 0,
+            status: ded.status,
+            createdAt: ded.createdAt,
+            approvedBy: ded.approvedBy,
+            notes: ded.notes
+          }));
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('❌ Error loading deductions:', error);
+          // Fallback to generating from users if deductions endpoint fails
+          this.loadUsersAsDeductions();
+        }
+      });
+  }
+
+  private loadUsersAsDeductions() {
     console.log('🔄 Loading users for deductions from:', `${environment.apiUrl}/auth/users`);
     
     this.http.get<User[]>(`${environment.apiUrl}/auth/users`)
@@ -192,7 +238,32 @@ export class DeductionComponent implements OnInit {
   }
 
   addDeduction() {
-    alert('Add Deduction functionality will be implemented here');
+    // Initialize a new deduction with sensible defaults
+    const defaultMonth = this.months.includes('December') ? 'December' : this.months[1];
+    const currentYear = new Date().getFullYear();
+    this.newDeduction = {
+      employeeId: '',
+      employeeName: '',
+      employeePhoto: '',
+      department: 'Engineering',
+      month: defaultMonth,
+      year: currentYear,
+      tax: 0,
+      pf: 0,
+      esi: 0,
+      professionalTax: 0,
+      loanDeduction: 0,
+      advanceDeduction: 0,
+      other: 0,
+      totalDeduction: 0,
+      grossSalary: 0,
+      netSalary: 0,
+      status: 'Pending',
+      approvedBy: '',
+      notes: ''
+    };
+    this.showAddModal = true;
+    this.onAddFieldChange();
   }
 
   viewDeduction(deduction: any) {
@@ -204,13 +275,231 @@ export class DeductionComponent implements OnInit {
   }
 
   editDeduction(deduction: any) {
-    alert(`Edit deduction: ${deduction.employeeName}`);
+    console.log('🔄 Opening edit modal for deduction:', deduction);
+    this.editingDeduction = { ...deduction }; // Create a copy for editing
+    this.showEditModal = true;
+    this.onEditFieldChange();
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
+    this.editingDeduction = null;
+    this.isSubmittingEdit = false;
+  }
+
+  closeAddModal() {
+    this.showAddModal = false;
+    this.newDeduction = null;
+    this.isSubmittingAdd = false;
+  }
+
+  submitEditDeduction() {
+    if (!this.editingDeduction) return;
+
+    // Validate required fields (employee name is auto-populated, so not required in validation)
+    if (!this.editingDeduction.employeeId || 
+        !this.editingDeduction.month || !this.editingDeduction.year) {
+      alert('❌ Please fill in all required fields (Employee ID, Month, Year)');
+      return;
+    }
+
+    this.isSubmittingEdit = true;
+
+    // Ensure calculated fields are up-to-date before submit
+    this.onEditFieldChange();
+
+    // Prepare the update data
+    const updateData = {
+      employeeId: this.editingDeduction.employeeId,
+      employeeName: this.editingDeduction.employeeName,
+      department: this.editingDeduction.department,
+      month: this.editingDeduction.month,
+      year: this.editingDeduction.year,
+      tax: this.editingDeduction.tax || 0,
+      pf: this.editingDeduction.pf || 0,
+      esi: this.editingDeduction.esi || 0,
+      professionalTax: this.editingDeduction.professionalTax || 0,
+      loanDeduction: this.editingDeduction.loanDeduction || 0,
+      advanceDeduction: this.editingDeduction.advanceDeduction || 0,
+      other: this.editingDeduction.other || 0,
+      totalDeduction: this.editingDeduction.totalDeduction,
+      grossSalary: this.editingDeduction.grossSalary || 0,
+      netSalary: this.editingDeduction.netSalary || 0,
+      status: this.editingDeduction.status,
+      approvedBy: this.editingDeduction.approvedBy,
+      notes: this.editingDeduction.notes
+    };
+
+    console.log('🚀 Updating deduction:', updateData);
+
+    // Call the backend API to update deduction
+    this.http.put<any>(`${environment.apiUrl}/admin/deductions/${this.editingDeduction.id}`, updateData)
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Deduction updated successfully:', response);
+          
+          // Update the deduction in the local array
+          const index = this.deductions.findIndex(ded => ded.id === this.editingDeduction.id);
+          if (index !== -1) {
+            this.deductions[index] = { ...this.deductions[index], ...updateData };
+          }
+          
+          alert(`✅ Deduction record for ${this.editingDeduction.employeeName} updated successfully!`);
+          this.closeEditModal();
+          this.isSubmittingEdit = false;
+        },
+        error: (error) => {
+          console.error('❌ Error updating deduction:', error);
+          alert('❌ Error updating deduction: ' + (error.error?.message || error.message));
+          this.isSubmittingEdit = false;
+        }
+      });
+  }
+
+  resetEditForm() {
+    if (this.editingDeduction) {
+      // Find the original deduction data
+      const originalDeduction = this.deductions.find(ded => ded.id === this.editingDeduction.id);
+      if (originalDeduction) {
+        this.editingDeduction = { ...originalDeduction }; // Reset to original values
+      }
+    }
   }
 
   deleteDeduction(deduction: any) {
-    if (confirm(`Are you sure you want to delete deduction for ${deduction.employeeName}?`)) {
-      alert(`Deduction for ${deduction.employeeName} deleted successfully`);
+    if (confirm(`Are you sure you want to delete deduction for ${deduction.employeeName}?\n\nThis action cannot be undone.`)) {
+      console.log('🗑️ Deleting deduction:', deduction);
+      
+      // Call the backend API to delete deduction
+      this.http.delete<any>(`${environment.apiUrl}/admin/deductions/${deduction.id}`)
+        .subscribe({
+          next: (response) => {
+            console.log('✅ Deduction deleted successfully:', response);
+            
+            // Remove the deduction from the local array
+            const index = this.deductions.findIndex(ded => ded.id === deduction.id);
+            if (index !== -1) {
+              this.deductions.splice(index, 1);
+            }
+            
+            alert(`✅ Deduction record for ${deduction.employeeName} deleted successfully!`);
+          },
+          error: (error) => {
+            console.error('❌ Error deleting deduction:', error);
+            alert('❌ Error deleting deduction: ' + (error.error?.message || error.message));
+          }
+        });
     }
+  }
+
+  // Live updates for calculated fields during edit
+  onEditFieldChange() {
+    if (!this.editingDeduction) return;
+    const toNumber = (v: any) => {
+      const n = parseFloat(v);
+      return isNaN(n) ? 0 : n;
+    };
+    this.editingDeduction.tax = toNumber(this.editingDeduction.tax);
+    this.editingDeduction.pf = toNumber(this.editingDeduction.pf);
+    this.editingDeduction.esi = toNumber(this.editingDeduction.esi);
+    this.editingDeduction.professionalTax = toNumber(this.editingDeduction.professionalTax);
+    this.editingDeduction.loanDeduction = toNumber(this.editingDeduction.loanDeduction);
+    this.editingDeduction.advanceDeduction = toNumber(this.editingDeduction.advanceDeduction);
+    this.editingDeduction.other = toNumber(this.editingDeduction.other);
+    this.editingDeduction.grossSalary = toNumber(this.editingDeduction.grossSalary);
+
+    this.editingDeduction.totalDeduction =
+      this.editingDeduction.tax +
+      this.editingDeduction.pf +
+      this.editingDeduction.esi +
+      this.editingDeduction.professionalTax +
+      this.editingDeduction.loanDeduction +
+      this.editingDeduction.advanceDeduction +
+      this.editingDeduction.other;
+    this.editingDeduction.netSalary =
+      this.editingDeduction.grossSalary - (this.editingDeduction.totalDeduction || 0);
+  }
+
+  // Live updates for calculated fields during add
+  onAddFieldChange() {
+    if (!this.newDeduction) return;
+    const toNumber = (v: any) => {
+      const n = parseFloat(v);
+      return isNaN(n) ? 0 : n;
+    };
+    this.newDeduction.tax = toNumber(this.newDeduction.tax);
+    this.newDeduction.pf = toNumber(this.newDeduction.pf);
+    this.newDeduction.esi = toNumber(this.newDeduction.esi);
+    this.newDeduction.professionalTax = toNumber(this.newDeduction.professionalTax);
+    this.newDeduction.loanDeduction = toNumber(this.newDeduction.loanDeduction);
+    this.newDeduction.advanceDeduction = toNumber(this.newDeduction.advanceDeduction);
+    this.newDeduction.other = toNumber(this.newDeduction.other);
+    this.newDeduction.grossSalary = toNumber(this.newDeduction.grossSalary);
+
+    this.newDeduction.totalDeduction =
+      this.newDeduction.tax +
+      this.newDeduction.pf +
+      this.newDeduction.esi +
+      this.newDeduction.professionalTax +
+      this.newDeduction.loanDeduction +
+      this.newDeduction.advanceDeduction +
+      this.newDeduction.other;
+    this.newDeduction.netSalary =
+      this.newDeduction.grossSalary - (this.newDeduction.totalDeduction || 0);
+  }
+
+  submitAddDeduction() {
+    if (!this.newDeduction) return;
+
+    if (!this.newDeduction.employeeId || !this.newDeduction.employeeName || !this.newDeduction.month || !this.newDeduction.year) {
+      alert('❌ Please fill in required fields: Employee ID, Employee Name, Month, Year');
+      return;
+    }
+
+    this.isSubmittingAdd = true;
+    this.onAddFieldChange();
+
+    const createData = {
+      employeeId: this.newDeduction.employeeId,
+      employeeName: this.newDeduction.employeeName,
+      department: this.newDeduction.department,
+      month: this.newDeduction.month,
+      year: this.newDeduction.year,
+      tax: this.newDeduction.tax,
+      pf: this.newDeduction.pf,
+      esi: this.newDeduction.esi,
+      professionalTax: this.newDeduction.professionalTax,
+      loanDeduction: this.newDeduction.loanDeduction,
+      advanceDeduction: this.newDeduction.advanceDeduction,
+      other: this.newDeduction.other,
+      totalDeduction: this.newDeduction.totalDeduction,
+      grossSalary: this.newDeduction.grossSalary,
+      netSalary: this.newDeduction.netSalary,
+      status: this.newDeduction.status,
+      approvedBy: this.newDeduction.approvedBy,
+      notes: this.newDeduction.notes
+    };
+
+    this.http.post<any>(`${environment.apiUrl}/admin/deductions`, createData)
+      .subscribe({
+        next: (response) => {
+          const created = {
+            id: response?.id ?? `DED${Math.floor(Math.random()*100000)}`,
+            employeePhoto: '',
+            createdAt: response?.createdAt ?? new Date().toISOString().split('T')[0],
+            ...createData
+          };
+          this.deductions.unshift(created as any);
+          alert(`✅ Deduction created for ${created.employeeName}`);
+          this.closeAddModal();
+          this.isSubmittingAdd = false;
+        },
+        error: (error) => {
+          console.error('❌ Error creating deduction:', error);
+          alert('❌ Error creating deduction: ' + (error.error?.message || error.message));
+          this.isSubmittingAdd = false;
+        }
+      });
   }
 
   approveDeduction(deduction: any) {

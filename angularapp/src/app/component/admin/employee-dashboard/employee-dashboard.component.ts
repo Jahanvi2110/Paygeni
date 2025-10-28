@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../service/auth.service';
 import { PayrollService, Payroll } from '../../../service/payroll.service';
 import { LeaveRequestService, LeaveRequest } from '../../../service/payroll.service';
 import { AdvanceRequestService, AdvanceRequest } from '../../../service/payroll.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-employee-dashboard',
@@ -107,12 +109,17 @@ export class EmployeeDashboardComponent implements OnInit {
   pendingPayments: any[] = [];
   pendingItems: any[] = [];
 
+  // Tooltip states
+  showLeavesTooltip = false;
+  showLoansTooltip = false;
+
   constructor(
     private authService: AuthService,
     private location: Location,
     private payrollService: PayrollService,
     private leaveRequestService: LeaveRequestService,
-    private advanceRequestService: AdvanceRequestService
+    private advanceRequestService: AdvanceRequestService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -150,6 +157,31 @@ export class EmployeeDashboardComponent implements OnInit {
       phone: this.phone,
       id: this.employeeId
     });
+
+    // Load real employee data from database
+    this.loadRealEmployeeData();
+  }
+
+  loadRealEmployeeData() {
+    if (!this.currentUser?.id) return;
+    
+    // Load employee data from database
+    this.http.get<any>(`${environment.apiUrl}/employees/${this.currentUser.id}`)
+      .subscribe({
+        next: (employee) => {
+          console.log('✅ Loaded employee data from database:', employee);
+          this.employeeName = `${employee.firstName} ${employee.lastName || ''}`.trim();
+          this.department = employee.department || 'General';
+          this.position = employee.designation || 'Employee';
+          this.joinDate = employee.hireDate || this.getRandomJoinDate();
+          this.email = employee.email || this.email;
+          this.phone = employee.phoneNumber || this.phone;
+        },
+        error: (error) => {
+          console.error('❌ Error loading employee data:', error);
+          // Keep the fallback values from currentUser
+        }
+      });
   }
 
   loadDashboardData() {
@@ -405,6 +437,7 @@ export class EmployeeDashboardComponent implements OnInit {
   closePayrollModal() {
     this.showPayrollModal = false;
   }
+  
 
   // Punch In/Out Methods
   punchIn() {
@@ -647,5 +680,14 @@ Notes: ${payroll.notes || 'N/A'}
     const randomDays = Math.floor(Math.random() * 30) + 1; // 1-30 days from now
     const nextDate = new Date(currentDate.getTime() + (randomDays * 24 * 60 * 60 * 1000));
     return nextDate.toISOString().split('T')[0];
+  }
+
+  // Tooltip methods
+  getLeavesTooltip(): string {
+    return `Leave Summary:\nTotal: ${this.totalLeaves} days\nUsed: ${this.usedLeaves} days\nRemaining: ${this.remainingLeaves} days\nThis Month: ${this.totalLeavesTaken} days`;
+  }
+
+  getLoansTooltip(): string {
+    return `Loan Summary:\nActive Loans: ${this.activeLoansCount}\nTotal Amount: ₹${this.activeLoanAmount.toLocaleString()}\nOutstanding: ₹${this.outstandingAmount.toLocaleString()}\nTotal Requests: ${this.advanceRequests.length}`;
   }
 }

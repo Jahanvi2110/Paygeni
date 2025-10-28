@@ -33,21 +33,112 @@
       <div class="form-group">
         <div class="input-wrapper">
           <div class="input-icon">📧</div>
-          <input type="email" [(ngModel)]="email" name="email" class="form-input" placeholder="Enter your email" required>
+          <input type="email" [(ngModel)]="email" name="email" class="form-input" 
+                 [class.error]="formErrors.email" placeholder="Enter your email" required>
         </div>
+        <div class="error-message" *ngIf="formErrors.email">{{ formErrors.email }}</div>
       </div>
       
       <div class="form-group">
         <div class="input-wrapper">
           <div class="input-icon">🔒</div>
-          <input type="password" [(ngModel)]="password" name="password" class="form-input" placeholder="Enter your password" required>
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" 
+                 class="form-input" [class.error]="formErrors.password" placeholder="Enter your password" required>
+          <button type="button" class="eye-toggle" (click)="togglePasswordVisibility()">
+            <svg *ngIf="!showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg *ngIf="showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
         </div>
+        <div class="error-message" *ngIf="formErrors.password">{{ formErrors.password }}</div>
       </div>
 
-      <button type="submit" class="login-btn">
-        <span class="btn-text">Sign In</span>
+      <button type="submit" class="login-btn" [disabled]="isSubmitting">
+        <span class="btn-text" *ngIf="!isSubmitting">Sign In</span>
+        <span class="btn-text" *ngIf="isSubmitting">Signing In...</span>
+        <div class="spinner" *ngIf="isSubmitting"></div>
       </button>
     </form>
+
+    <!-- Forgot Password Form -->
+    <div class="forgot-password-form" *ngIf="showForgotPassword">
+      <div class="forgot-header">
+        <h3>Reset Your Password</h3>
+        <p>Enter your email and new password</p>
+      </div>
+
+      <form (ngSubmit)="onForgotPassword()" class="forgot-form">
+        <div class="form-group">
+          <div class="input-wrapper">
+            <div class="input-icon">📧</div>
+            <input type="email" [(ngModel)]="email" name="forgotEmail" class="form-input" 
+                   [class.error]="forgotPasswordErrors.email" placeholder="Enter your email" required>
+          </div>
+          <div class="error-message" *ngIf="forgotPasswordErrors.email">{{ forgotPasswordErrors.email }}</div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-wrapper">
+            <div class="input-icon">🔒</div>
+            <input [type]="showNewPassword ? 'text' : 'password'" [(ngModel)]="newPassword" name="newPassword" 
+                   class="form-input" [class.error]="forgotPasswordErrors.newPassword" placeholder="Enter new password" required>
+            <button type="button" class="eye-toggle" (click)="toggleNewPasswordVisibility()">
+              <svg *ngIf="!showNewPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg *ngIf="showNewPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+          <div class="error-message" *ngIf="forgotPasswordErrors.newPassword">{{ forgotPasswordErrors.newPassword }}</div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-wrapper">
+            <div class="input-icon">🔒</div>
+            <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" 
+                   class="form-input" [class.error]="forgotPasswordErrors.confirmPassword" placeholder="Confirm new password" required>
+            <button type="button" class="eye-toggle" (click)="toggleConfirmPasswordVisibility()">
+              <svg *ngIf="!showConfirmPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg *ngIf="showConfirmPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+          <div class="error-message" *ngIf="forgotPasswordErrors.confirmPassword">{{ forgotPasswordErrors.confirmPassword }}</div>
+        </div>
+
+        <div class="forgot-actions">
+          <button type="submit" class="forgot-btn" [disabled]="isSubmittingForgot">
+            <span class="btn-text" *ngIf="!isSubmittingForgot">Update Password</span>
+            <span class="btn-text" *ngIf="isSubmittingForgot">Updating...</span>
+            <div class="spinner" *ngIf="isSubmittingForgot"></div>
+          </button>
+          <button type="button" class="cancel-btn" (click)="hideForgotPasswordForm()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Login Actions -->
+    <div class="login-actions" *ngIf="!showForgotPassword">
+      <button type="button" class="forgot-link" (click)="showForgotPasswordForm()">
+        Forgot Password?
+      </button>
+    </div>
 
     <!-- Register Section -->
     <div class="register-section">

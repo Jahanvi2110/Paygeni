@@ -29,6 +29,7 @@ public class Attendance {
     private Double attendancePercentage;
     private Integer lateArrivals;
     private Integer earlyDepartures;
+    private Integer overtimeHours;
     private String lastAttendanceDate;
     private LocalDate createdAt;
     private String notes;
@@ -90,6 +91,9 @@ public class Attendance {
     
     public Integer getEarlyDepartures() { return earlyDepartures; }
     public void setEarlyDepartures(Integer earlyDepartures) { this.earlyDepartures = earlyDepartures; }
+    
+    public Integer getOvertimeHours() { return overtimeHours; }
+    public void setOvertimeHours(Integer overtimeHours) { this.overtimeHours = overtimeHours; }
     
     public String getLastAttendanceDate() { return lastAttendanceDate; }
     public void setLastAttendanceDate(String lastAttendanceDate) { this.lastAttendanceDate = lastAttendanceDate; }

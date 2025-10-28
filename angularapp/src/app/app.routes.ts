@@ -27,6 +27,10 @@ export const routes: Routes = [
     path: 'admin-dashboard', 
     loadComponent: () => import('./component/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
   },
+  { path: 'employee-dashboard', loadComponent: () => import('./component/admin/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent) 
+
+  },
+
   { 
     path: 'payrolls', 
     loadComponent: () => import('./component/admin/payroll/payroll.component').then(m => m.PayrollComponent)
@@ -38,14 +42,6 @@ export const routes: Routes = [
   { 
     path: 'deduction', 
     loadComponent: () => import('./component/admin/deduction/deduction.component').then(m => m.DeductionComponent)
-  },
-  { 
-    path: 'dashboard', 
-    loadComponent: () => import('./component/admin/dashboard/dashboard.component').then(m => m.DashboardComponent)
-  },
-  { 
-    path: 'employee-dashboard', 
-    loadComponent: () => import('./component/admin/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent) 
   },
   { 
     path: 'debug', 

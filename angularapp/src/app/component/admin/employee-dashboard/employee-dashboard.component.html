@@ -61,7 +61,10 @@
         </div>
 
         <!-- Leaves Card -->
-        <div class="stat-card leaves-card">
+        <div class="stat-card leaves-card" 
+             [title]="getLeavesTooltip()" 
+             (mouseenter)="showLeavesTooltip = true" 
+             (mouseleave)="showLeavesTooltip = false">
           <div class="card-icon">📅</div>
           <div class="card-content">
             <h3>Leaves Taken</h3>
@@ -80,6 +83,40 @@
             </svg>
             Request Leave
           </button>
+          
+          <!-- Enhanced Tooltip -->
+          <div class="enhanced-tooltip leaves-tooltip" *ngIf="showLeavesTooltip">
+            <div class="tooltip-header">
+              <h4>📅 Leave Summary</h4>
+            </div>
+            <div class="tooltip-content">
+              <div class="tooltip-item">
+                <span class="tooltip-label">Total Leaves:</span>
+                <span class="tooltip-value">{{ totalLeaves }} days</span>
+              </div>
+              <div class="tooltip-item">
+                <span class="tooltip-label">Used Leaves:</span>
+                <span class="tooltip-value">{{ usedLeaves }} days</span>
+              </div>
+              <div class="tooltip-item">
+                <span class="tooltip-label">Remaining:</span>
+                <span class="tooltip-value">{{ remainingLeaves }} days</span>
+              </div>
+              <div class="tooltip-item">
+                <span class="tooltip-label">This Month:</span>
+                <span class="tooltip-value">{{ totalLeavesTaken }} days</span>
+              </div>
+              <div class="tooltip-item highlight">
+                <span class="tooltip-label">Status:</span>
+                <span class="tooltip-value" [class]="remainingLeaves > 5 ? 'good' : remainingLeaves > 2 ? 'warning' : 'critical'">
+                  {{ remainingLeaves > 5 ? 'Good' : remainingLeaves > 2 ? 'Low' : 'Critical' }}
+                </span>
+              </div>
+            </div>
+            <div class="tooltip-footer">
+              <small>Click "Request Leave" to apply for new leave</small>
+            </div>
+          </div>
         </div>
 
         <!-- Work Timing Card -->
@@ -112,7 +149,10 @@
         </div>
 
         <!-- Loans Card -->
-        <div class="stat-card loans-card">
+        <div class="stat-card loans-card" 
+             [title]="getLoansTooltip()" 
+             (mouseenter)="showLoansTooltip = true" 
+             (mouseleave)="showLoansTooltip = false">
           <div class="card-icon">💳</div>
           <div class="card-content">
             <h3>Active Loans</h3>
@@ -129,6 +169,40 @@
             </svg>
             Request Advance
           </button>
+          
+          <!-- Enhanced Tooltip -->
+          <div class="enhanced-tooltip loans-tooltip" *ngIf="showLoansTooltip">
+            <div class="tooltip-header">
+              <h4>💳 Loan Summary</h4>
+            </div>
+            <div class="tooltip-content">
+              <div class="tooltip-item">
+                <span class="tooltip-label">Active Loans:</span>
+                <span class="tooltip-value">{{ activeLoansCount }} loan(s)</span>
+              </div>
+              <div class="tooltip-item">
+                <span class="tooltip-label">Total Amount:</span>
+                <span class="tooltip-value">₹{{ activeLoanAmount | number:'1.0-0' }}</span>
+              </div>
+              <div class="tooltip-item">
+                <span class="tooltip-label">Outstanding:</span>
+                <span class="tooltip-value">₹{{ outstandingAmount | number:'1.0-0' }}</span>
+              </div>
+              <div class="tooltip-item">
+                <span class="tooltip-label">Recent Requests:</span>
+                <span class="tooltip-value">{{ advanceRequests.length }} total</span>
+              </div>
+              <div class="tooltip-item highlight">
+                <span class="tooltip-label">Status:</span>
+                <span class="tooltip-value" [class]="activeLoansCount === 0 ? 'good' : activeLoansCount <= 2 ? 'warning' : 'critical'">
+                  {{ activeLoansCount === 0 ? 'No Active Loans' : activeLoansCount <= 2 ? 'Manageable' : 'High Debt' }}
+                </span>
+              </div>
+            </div>
+            <div class="tooltip-footer">
+              <small>Click "Request Advance" to apply for new loan</small>
+            </div>
+          </div>
         </div>
 
       </div>

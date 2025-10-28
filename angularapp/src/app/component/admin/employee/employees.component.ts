@@ -29,6 +29,9 @@ export class EmployeesComponent implements OnInit {
   showEditModal = false;
   editingEmployee: any = null;
   isSubmittingEdit = false;
+  showAddModal = false;
+  newEmployee: any = null;
+  isSubmittingAdd = false;
   
   // Department options
   departments = ['All', 'Engineering', 'Design', 'Human Resources', 'Marketing', 'Sales'];
@@ -59,52 +62,37 @@ export class EmployeesComponent implements OnInit {
   private loadEmployees() {
     this.isLoading = true;
     
-    // Use a timeout to prevent hanging
-    const timeout = setTimeout(() => {
-      if (this.isLoading) {
-        console.warn('Loading timeout - falling back to users');
-        this.loadUsersAsEmployees();
-      }
-    }, 5000); // 5 second timeout
-    
-    // Try to get users directly (faster approach)
-    this.http.get<any[]>(`${environment.apiUrl}/auth/users`)
+    // Load real employees from database
+    this.http.get<any[]>(`${environment.apiUrl}/employees`)
       .subscribe({
-        next: (users) => {
-          clearTimeout(timeout);
-          // Filter out admin users and transform to employee format
-          const employeeUsers = users.filter(user => user.role !== 'ADMIN');
-          this.employees = employeeUsers.map((user, index) => ({
-            id: user.id,
-            name: user.firstName,
+        next: (employees) => {
+          console.log('✅ Loaded employees from database:', employees);
+          this.employees = employees.map((emp, index) => ({
+            id: emp.id,
+            name: emp.firstName + (emp.lastName ? ' ' + emp.lastName : ''),
             role: 'Employee',
-            department: this.getDepartmentForRole(user.role),
-            email: user.email,
-            phone: user.phoneNumber,
-            salary: this.getSalaryForRole(user.role),
-            joinDate: this.getRandomJoinDate(),
-            status: 'Active',
+            department: emp.department || 'General',
+            email: emp.email,
+            phone: emp.phoneNumber,
+            salary: emp.salary || 50000,
+            joinDate: emp.hireDate || this.getRandomJoinDate(),
+            status: emp.status === 'ACTIVE' ? 'Active' : 'Inactive',
             photo: null,
-            location: 'Company Office',
+            location: emp.address || 'Company Office',
             manager: 'Department Manager',
-            skills: this.getSkillsForRole(user.role),
-            experience: '1+ years',
-            lastPromotion: this.getRandomJoinDate(),
+            skills: this.getSkillsForDepartment(emp.department),
+            experience: this.getExperienceFromJoinDate(emp.hireDate),
+            lastPromotion: this.getLastPromotionDate(emp.hireDate),
             performance: 4.5,
             projects: Math.floor(Math.random() * 10) + 1,
             teamSize: 1
           }));
-
-          // Add 3 extra employees
-          this.addExtraEmployees();
           this.isLoading = false;
         },
         error: (error) => {
-          clearTimeout(timeout);
-          console.error('Error loading users:', error);
-          // Show empty state instead of hanging
-          this.employees = [];
-          this.isLoading = false;
+          console.error('❌ Error loading employees:', error);
+          // Fallback to users if employees endpoint fails
+          this.loadUsersAsEmployees();
         }
       });
   }
@@ -263,9 +251,81 @@ export class EmployeesComponent implements OnInit {
     return skillSets[Math.floor(Math.random() * skillSets.length)];
   }
 
+  private getSkillsForDepartment(department: string): string[] {
+    const departmentSkills: { [key: string]: string[] } = {
+      'Engineering': ['JavaScript', 'React', 'Node.js', 'TypeScript', 'Java', 'Spring Boot'],
+      'Human Resources': ['Recruitment', 'Employee Relations', 'HRIS', 'Training', 'Performance Management'],
+      'Finance': ['Financial Analysis', 'Budgeting', 'Accounting', 'Excel', 'Financial Modeling'],
+      'Marketing': ['Digital Marketing', 'SEO', 'Social Media', 'Analytics', 'Content Creation'],
+      'Administration': ['Office Management', 'Administrative Support', 'Documentation', 'Communication'],
+      'Design': ['Figma', 'Sketch', 'Adobe Creative Suite', 'Prototyping', 'UI/UX Design']
+    };
+    return departmentSkills[department] || ['General Skills', 'Communication', 'Problem Solving'];
+  }
+
   addEmployee() {
-    alert('Add Employee functionality will be implemented here');
-    // Navigate to add employee form
+    this.newEmployee = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      department: 'Engineering',
+      salary: 0,
+      status: 'ACTIVE',
+      hireDate: new Date().toISOString().split('T')[0],
+      address: 'Company Office'
+    };
+    this.showAddModal = true;
+  }
+
+  closeAddModal() {
+    this.showAddModal = false;
+    this.newEmployee = null;
+    this.isSubmittingAdd = false;
+  }
+
+  submitAddEmployee() {
+    if (!this.newEmployee) return;
+    if (!this.newEmployee.firstName || !this.newEmployee.email || !this.newEmployee.phoneNumber) {
+      alert('❌ Please fill in required fields: First Name, Email, Phone');
+      return;
+    }
+
+    this.isSubmittingAdd = true;
+    this.http.post<any>(`${environment.apiUrl}/employees`, this.newEmployee)
+      .subscribe({
+        next: (response) => {
+          const created = {
+            id: response?.id ?? Math.floor(Math.random()*100000),
+            name: `${this.newEmployee.firstName} ${this.newEmployee.lastName ?? ''}`.trim(),
+            role: 'Employee',
+            department: this.newEmployee.department,
+            email: this.newEmployee.email,
+            phone: this.newEmployee.phoneNumber,
+            salary: this.newEmployee.salary,
+            joinDate: this.newEmployee.hireDate,
+            status: this.newEmployee.status === 'ACTIVE' ? 'Active' : 'Inactive',
+            photo: null,
+            location: this.newEmployee.address,
+            manager: 'Department Manager',
+            skills: this.getSkillsForDepartment(this.newEmployee.department),
+            experience: '1+ years',
+            lastPromotion: this.getRandomJoinDate(),
+            performance: 4.0,
+            projects: 1,
+            teamSize: 1
+          };
+          this.employees.unshift(created);
+          alert(`✅ Employee ${created.name} created successfully!`);
+          this.closeAddModal();
+          this.isSubmittingAdd = false;
+        },
+        error: (error) => {
+          console.error('❌ Error creating employee:', error);
+          alert('❌ Error creating employee: ' + (error.error?.message || error.message));
+          this.isSubmittingAdd = false;
+        }
+      });
   }
 
   viewEmployee(employee: any) {
@@ -282,9 +342,28 @@ export class EmployeesComponent implements OnInit {
   }
 
   deleteEmployee(employee: any) {
-    if (confirm(`Are you sure you want to delete ${employee.name}?`)) {
-      alert(`Employee ${employee.name} deleted successfully`);
-      // Implement delete functionality
+    if (confirm(`Are you sure you want to delete ${employee.name}?\n\nThis action cannot be undone.`)) {
+      console.log('🗑️ Deleting employee:', employee);
+      
+      // Call the backend API to delete employee (this will cascade delete user due to foreign key)
+      this.http.delete<any>(`${environment.apiUrl}/employees/${employee.id}`)
+        .subscribe({
+          next: (response) => {
+            console.log('✅ Employee deleted successfully:', response);
+            
+            // Remove the employee from the local array
+            const index = this.employees.findIndex(emp => emp.id === employee.id);
+            if (index !== -1) {
+              this.employees.splice(index, 1);
+            }
+            
+            alert(`✅ Employee ${employee.name} deleted successfully!`);
+          },
+          error: (error) => {
+            console.error('❌ Error deleting employee:', error);
+            alert('❌ Error deleting employee: ' + (error.error?.message || error.message));
+          }
+        });
     }
   }
 
@@ -481,34 +560,60 @@ export class EmployeesComponent implements OnInit {
 
     this.isSubmittingEdit = true;
 
-    // Prepare the update data
-    const updateData = {
-      firstName: this.editingEmployee.name,
+    // Prepare the update data for employee table
+    const employeeUpdateData = {
+      firstName: this.editingEmployee.name.split(' ')[0],
+      lastName: this.editingEmployee.name.split(' ').slice(1).join(' ') || '',
       email: this.editingEmployee.email,
       phoneNumber: this.editingEmployee.phone,
       department: this.editingEmployee.department,
       salary: this.editingEmployee.salary,
-      status: this.editingEmployee.status,
-      joinDate: this.editingEmployee.joinDate
+      status: this.editingEmployee.status === 'Active' ? 'ACTIVE' : 'INACTIVE',
+      hireDate: this.editingEmployee.joinDate,
+      address: this.editingEmployee.location
     };
 
-    console.log('🚀 Updating employee:', updateData);
+    console.log('🚀 Updating employee:', employeeUpdateData);
 
-    // Call the backend API to update user
-    this.http.put<any>(`${environment.apiUrl}/auth/users/${this.editingEmployee.id}`, updateData)
+    // Call the backend API to update employee
+    this.http.put<any>(`${environment.apiUrl}/employees/${this.editingEmployee.id}`, employeeUpdateData)
       .subscribe({
         next: (response) => {
           console.log('✅ Employee updated successfully:', response);
           
-          // Update the employee in the local array
-          const index = this.employees.findIndex(emp => emp.id === this.editingEmployee.id);
-          if (index !== -1) {
-            this.employees[index] = { ...this.employees[index], ...updateData };
-          }
-          
-          alert(`✅ Employee ${this.editingEmployee.name} updated successfully!`);
-          this.closeEditModal();
-          this.isSubmittingEdit = false;
+          // Also update the corresponding user record
+          const userUpdateData = {
+            firstName: employeeUpdateData.firstName,
+            lastName: employeeUpdateData.lastName,
+            email: employeeUpdateData.email,
+            phoneNumber: employeeUpdateData.phoneNumber,
+            department: employeeUpdateData.department,
+            status: employeeUpdateData.status
+          };
+
+          // Update user record as well
+          this.http.put<any>(`${environment.apiUrl}/auth/users/${this.editingEmployee.id}`, userUpdateData)
+            .subscribe({
+              next: (userResponse) => {
+                console.log('✅ User updated successfully:', userResponse);
+                
+                // Update the employee in the local array
+                const index = this.employees.findIndex(emp => emp.id === this.editingEmployee.id);
+                if (index !== -1) {
+                  this.employees[index] = { ...this.employees[index], ...this.editingEmployee };
+                }
+                
+                alert(`✅ Employee ${this.editingEmployee.name} updated successfully!`);
+                this.closeEditModal();
+                this.isSubmittingEdit = false;
+              },
+              error: (userError) => {
+                console.error('❌ Error updating user:', userError);
+                // Employee was updated but user update failed
+                alert(`⚠️ Employee updated but user record update failed: ${userError.error?.message || userError.message}`);
+                this.isSubmittingEdit = false;
+              }
+            });
         },
         error: (error) => {
           console.error('❌ Error updating employee:', error);

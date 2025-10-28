@@ -16,6 +16,10 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/login`, credentials);
   }
 
+  forgotPassword(data: any) {
+    return this.http.post(`${this.baseUrl}/forgot-password`, data);
+  }
+
   storeUser(user: any) {
     localStorage.setItem('user', JSON.stringify(user));
   }

@@ -1,6 +1,30 @@
 <header class="navbar">
   <div class="navbar__inner">
-    <a routerLink="/home" class="brand">Paygeni</a>
+    <a routerLink="/home" class="brand">
+      <div class="logo-container">
+        <svg class="paygeni-logo" viewBox="0 0 100 100" width="32" height="32">
+          <defs>
+            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+              <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <!-- P Letter -->
+          <rect x="15" y="20" width="8" height="50" fill="url(#logoGradient)" rx="2"/>
+          <rect x="15" y="20" width="25" height="8" fill="url(#logoGradient)" rx="2"/>
+          <rect x="15" y="35" width="25" height="8" fill="url(#logoGradient)" rx="2"/>
+          <!-- Dollar Sign -->
+          <circle cx="55" cy="45" r="18" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
+          <text x="55" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="url(#logoGradient)">$</text>
+          <!-- Sparkle Effect -->
+          <circle cx="75" cy="25" r="2" fill="#10b981" opacity="0.8"/>
+          <circle cx="80" cy="35" r="1.5" fill="#3b82f6" opacity="0.6"/>
+          <circle cx="85" cy="28" r="1" fill="#8b5cf6" opacity="0.7"/>
+        </svg>
+        <span class="logo-text">PayGeni</span>
+      </div>
+    </a>
     <nav class="navlinks">
       <a routerLink="/home">Home</a>
       <a routerLink="/login">Login</a>
@@ -13,33 +37,39 @@
   <div class="hero__content">
     <div class="hero__grid">
       <div class="hero__text">
-        <h1>Breakdown complex payroll calculations</h1>
-        <p>Automated payroll with attendance & leave tracking — hassle-free and on time.</p>
+        <h1>Streamline Your Payroll Management</h1>
+        <p>Complete payroll automation with attendance tracking, leave management, and real-time analytics. Built for modern businesses that value efficiency and accuracy.</p>
         <div class="hero__ctas">
-          <a routerLink="/signup" class="btn btn-primary">Get Started</a>
-          <a routerLink="/login" class="btn btn-outline">Login</a>
+          <a routerLink="/signup" class="btn btn-primary">
+            <span>Get Started</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <a routerLink="/login" class="btn btn-outline">
+            <span>Sign In</span>
+          </a>
         </div>
         <div class="hero__trust">
-          <span>Trusted by SMEs</span>
+          <div class="trust-badges">
+            <div class="trust-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"/>
+                <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3"/>
+              </svg>
+              <span>Secure & Compliant</span>
+            </div>
+            <div class="trust-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+              <span>Lightning Fast</span>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="hero__card">
-        <h3>We'd love to answer your questions</h3>
-        <p>Get a personalised online demo & start your hassle-free payroll management journey today!</p>
-        <form class="hero-form" (submit)="$event.preventDefault()">
-          <div class="row">
-            <input type="text" placeholder="Name" required>
-            <input type="email" placeholder="Email" required>
-          </div>
-          <div class="row">
-            <input type="tel" placeholder="Phone number">
-            <input type="text" placeholder="City">
-          </div>
-          <div class="row single">
-            <input type="text" placeholder="Business name">
-          </div>
-          <button class="btn btn-primary full" type="submit">Submit</button>
-        </form>
       </div>
     </div>
   </div>
@@ -50,9 +80,9 @@
 <section class="features-tabs">
   <div class="features-tabs__inner">
     <div class="features-tabs__header">
-      <span class="chip">Our features</span>
-      <h2>Next‑gen payroll software for next‑gen business owners</h2>
-      <p>We do payroll management & complete attendance tracking of your staff, so you don’t have to!</p>
+      <span class="chip">Core Features</span>
+      <h2>Everything You Need for Payroll Management</h2>
+      <p>From automated calculations to comprehensive reporting, our platform handles all aspects of payroll processing with precision and ease.</p>
     </div>
 
     <div class="tabs">
@@ -63,20 +93,24 @@
       <label for="tab-attendance"><span class="num">02</span> Attendance & Timesheet</label>
 
       <input type="radio" id="tab-leave" name="features">
-      <label for="tab-leave"><span class="num">03</span> Simplified Leave Management</label>
+      <label for="tab-leave"><span class="num">03</span> Leave Management</label>
+
+      <input type="radio" id="tab-deductions" name="features">
+      <label for="tab-deductions"><span class="num">04</span> Deduction Management</label>
 
       <div class="panels">
         <div class="panel">
           <div class="panel__grid">
             <div class="panel__left">
               <h3>Automated Payroll System</h3>
-              <p>We will do the complex calculations for you so you can always disburse your salary payments on time!</p>
+              <p>Eliminate manual calculations and ensure accurate, timely salary disbursements with our intelligent payroll automation.</p>
               <ul class="checks">
-                <li>Bifurcate monthly & hourly wage employees</li>
-                <li>Enforce overtime & late entry rules with a penalty</li>
-                <li>Easy breakdown of PF, ESIC and PT in employee salary</li>
-                <li>Single‑page, editable & easy payroll dashboard</li>
-                <li>Ready‑to‑download pay slips for each employee</li>
+                <li>Smart calculation engine for monthly & hourly employees</li>
+                <li>Automatic overtime & penalty calculations</li>
+                <li>Compliance with PF, ESIC, and professional tax regulations</li>
+                <li>Intuitive dashboard with real-time payroll insights</li>
+                <li>Instant pay slip generation and distribution</li>
+                <li>Multi-currency support for global teams</li>
               </ul>
             </div>
             <div class="panel__right">
@@ -88,12 +122,15 @@
         <div class="panel">
           <div class="panel__grid">
             <div class="panel__left">
-              <h3>Attendance & Timesheet</h3>
-              <p>Fingerprint & location‑based attendance to keep track of your staff’s whereabouts.</p>
+              <h3>Smart Attendance & Timesheet</h3>
+              <p>Advanced attendance tracking with multiple verification methods to ensure accurate time management.</p>
               <ul class="checks">
-                <li>Robust hardware with fast capacitive sensor</li>
-                <li>Instant data sync with software</li>
-                <li>Easy revisions of punch‑in</li>
+                <li>Biometric & GPS-based attendance verification</li>
+                <li>Real-time attendance monitoring and alerts</li>
+                <li>Flexible shift management and scheduling</li>
+                <li>Mobile app for remote check-in/check-out</li>
+                <li>Automated timesheet generation and approval</li>
+                <li>Integration with payroll for seamless processing</li>
               </ul>
             </div>
             <div class="panel__right">
@@ -105,16 +142,39 @@
         <div class="panel">
           <div class="panel__grid">
             <div class="panel__left">
-              <h3>Simplified Leave Management</h3>
-              <p>Stay on top of your staff leaves & ensure you always have the required workforce.</p>
+              <h3>Comprehensive Leave Management</h3>
+              <p>Streamline leave requests, approvals, and tracking to maintain optimal workforce availability.</p>
               <ul class="checks">
-                <li>Multiple leave types</li>
-                <li>Paid & unpaid leave</li>
-                <li>Approval mechanism with balances</li>
+                <li>Multiple leave types (sick, vacation, personal, etc.)</li>
+                <li>Automated leave balance calculations</li>
+                <li>Multi-level approval workflows</li>
+                <li>Calendar integration and conflict detection</li>
+                <li>Leave policy customization and enforcement</li>
+                <li>Real-time leave status notifications</li>
               </ul>
             </div>
             <div class="panel__right">
               <img class="panel__image" src="/assets/images/leave.svg" alt="Leave" />
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__grid">
+            <div class="panel__left">
+              <h3>Advanced Deduction Management</h3>
+              <p>Handle all types of employee deductions with precision and maintain complete transparency in salary calculations.</p>
+              <ul class="checks">
+                <li>Tax deductions (Income Tax, Professional Tax)</li>
+                <li>Statutory deductions (PF, ESIC, TDS)</li>
+                <li>Loan and advance deductions</li>
+                <li>Custom deduction categories</li>
+                <li>Automated calculation and application</li>
+                <li>Detailed deduction reports and analytics</li>
+              </ul>
+            </div>
+            <div class="panel__right">
+              <img class="panel__image" src="/assets/images/employee.svg" alt="Deductions" />
             </div>
           </div>
         </div>
@@ -127,9 +187,9 @@
 
 <section class="usp-sections">
   <div class="usp-header">
-    <span class="chip">Our USPs</span>
-    <h2>Easy, detailed & accurate operations</h2>
-    <p>We have built functionalities that makes complex payroll processes extra smooth for you</p>
+    <span class="chip">Why Choose PayGeni</span>
+    <h2>Designed for Business Success</h2>
+    <p>Our platform combines powerful automation with intuitive design to deliver payroll solutions that grow with your business.</p>
   </div>
  
   <div class="usp-row">
@@ -228,15 +288,39 @@
 </section>
 
 <section class="cta">
-  <h2>Let's automate what's slowing you down</h2>
-  <a routerLink="/signup" class="btn btn-primary">Start Free</a>
+  <h2>Ready to streamline your payroll process?</h2>
+  <a routerLink="/signup" class="btn btn-primary">Get Started Now</a>
 </section>
 
 <footer class="footer">
   <div class="footer__inner">
     <div class="footer__content">
       <div class="footer__brand">
-        <h3>Paygeni</h3>
+        <div class="footer-logo">
+          <div class="logo-container">
+            <svg class="paygeni-logo" viewBox="0 0 100 100" width="40" height="40">
+              <defs>
+                <linearGradient id="footerLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <!-- P Letter -->
+              <rect x="15" y="20" width="8" height="50" fill="url(#footerLogoGradient)" rx="2"/>
+              <rect x="15" y="20" width="25" height="8" fill="url(#footerLogoGradient)" rx="2"/>
+              <rect x="15" y="35" width="25" height="8" fill="url(#footerLogoGradient)" rx="2"/>
+              <!-- Dollar Sign -->
+              <circle cx="55" cy="45" r="18" fill="none" stroke="url(#footerLogoGradient)" stroke-width="4"/>
+              <text x="55" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="url(#footerLogoGradient)">$</text>
+              <!-- Sparkle Effect -->
+              <circle cx="75" cy="25" r="2" fill="#10b981" opacity="0.8"/>
+              <circle cx="80" cy="35" r="1.5" fill="#3b82f6" opacity="0.6"/>
+              <circle cx="85" cy="28" r="1" fill="#8b5cf6" opacity="0.7"/>
+            </svg>
+            <h3>PayGeni</h3>
+          </div>
+        </div>
         <p>Automated payroll management made simple</p>
       </div>
       
